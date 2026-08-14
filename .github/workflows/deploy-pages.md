@@ -59,6 +59,8 @@ rm -rf -- 'tmp/upload'
 
 The placeholder is only the initial production deployment. The first successful GitHub Actions run replaces it with the complete site from `dist`. Cloudflare allows dashboard drag-and-drop and Wrangler deployments within the same Direct Upload project. A Direct Upload project cannot be converted to Git integration later, but this does not prevent deployments through GitHub Actions and Wrangler.
 
+Dashboard drag-and-drop may assign a different production branch. The workflow corrects the project setting to `production` through the Cloudflare Pages API before each upload, so `--branch=production` updates the main `pages.dev` domain instead of creating only a preview deployment.
+
 ### 💻 Wrangler CLI method
 
 This is the recommended setup for this repository because it creates the empty project without a temporary dashboard upload. OAuth opens a browser once, while project creation and verification stay in the terminal:
@@ -155,6 +157,7 @@ gh run rerun RUN_ID --failed --repo VincentZyu233/sky-shards
 
 - `Project not found`: confirm the Cloudflare project is a Direct Upload project named `sky-shards-vincentzyu233-fork` in the account identified by `CLOUDFLARE_ACCOUNT_ID`.
 - `Authentication error`: recreate the token with `Account / Cloudflare Pages / Edit` for the correct account, then update `CLOUDFLARE_API_TOKEN`.
+- The main Cloudflare domain still shows the placeholder: confirm the workflow's **Configure Cloudflare Pages production branch** step succeeded, then rerun the workflow.
 - GitHub Pages returns 404 at the site root: confirm Pages uses **GitHub Actions** as its source and rerun the GitHub Pages job.
 - A workflow is skipped: confirm the latest pushed commit contains lowercase `deploy-pages` or `deploypages`, or use manual dispatch.
 - A deep GitHub Pages URL returns the app shell before JavaScript loads: this is expected because `404.html` provides the SPA fallback.

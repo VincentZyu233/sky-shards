@@ -119,6 +119,23 @@ jobs:
           DEPLOY_BASE: /
         run: pnpm buildonly
 
+      - name: Configure Cloudflare Pages production branch
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          response="$(
+            curl --silent --show-error --fail-with-body \
+              --request PATCH \
+              --url "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/sky-shards-vincentzyu233-fork" \
+              --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+              --header "Content-Type: application/json" \
+              --data '{"production_branch":"production"}'
+          )"
+          jq --exit-status \
+            '.success == true and .result.production_branch == "production"' \
+            <<< "$response" > /dev/null
+
       - name: Deploy Cloudflare Pages
         id: deployment
         uses: cloudflare/wrangler-action@v4

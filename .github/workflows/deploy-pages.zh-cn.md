@@ -59,6 +59,8 @@ rm -rf -- 'tmp/upload'
 
 占位页只是首次生产部署。GitHub Actions 首次成功运行后，会使用 `dist` 中的完整站点替换它。Cloudflare 允许同一个 Direct Upload 项目混用网页拖放和 Wrangler 部署。Direct Upload 项目以后不能转换为 Git integration，但这不会妨碍 GitHub Actions 和 Wrangler 部署。
 
+通过网页拖放创建项目时，Cloudflare 可能会指定其他生产分支。工作流会在每次上传前通过 Cloudflare Pages API 将项目设置修正为 `production`，确保 `--branch=production` 更新主 `pages.dev` 域名，而不是只创建 Preview 部署。
+
 ### 💻 Wrangler CLI 方法
 
 本仓库推荐使用这种设置方式，因为它无需临时网页上传即可创建空项目。OAuth 只会打开一次浏览器，其余项目创建和验证操作都在终端中完成：
@@ -155,6 +157,7 @@ gh run rerun RUN_ID --failed --repo VincentZyu233/sky-shards
 
 - `Project not found`：确认 Cloudflare 项目是 Direct Upload 项目，名称为 `sky-shards-vincentzyu233-fork`，并且位于 `CLOUDFLARE_ACCOUNT_ID` 标识的账户中。
 - `Authentication error`：为正确账户使用 `Account / Cloudflare Pages / Edit` 权限重新创建 Token，然后更新 `CLOUDFLARE_API_TOKEN`。
+- Cloudflare 主域名仍显示占位页：确认工作流中的 **Configure Cloudflare Pages production branch** 步骤成功，然后重新运行工作流。
 - GitHub Pages 在站点根路径返回 404：确认 Pages 使用 **GitHub Actions** 作为来源，然后重新运行 GitHub Pages job。
 - 工作流被跳过：确认最新推送的提交包含小写的 `deploy-pages` 或 `deploypages`，或者使用手动触发。
 - 深层 GitHub Pages URL 在 JavaScript 加载前返回应用外壳：这是预期行为，因为 `404.html` 提供了 SPA 回退。
