@@ -6,6 +6,7 @@ import { TbForms } from 'react-icons/tb';
 import { Settings as LuxonSettings } from 'luxon';
 import { patternCredits } from '../../data/credits';
 import useFeedbackFormUrl from '../../hooks/useFeedbackFom';
+import { withBasePath } from '../../utils/basePath';
 
 interface SubFooterProps {
   className?: string;
@@ -168,7 +169,7 @@ function SkyClockFooter() {
         title: 'Sky Clock',
         description: t('skyClockDescription'),
         link: 'https://sky-clock.netlify.app/',
-        icon: '/ext/sky-clock.webp',
+        icon: withBasePath('/ext/sky-clock.webp'),
         creator: 'Chris Stead',
       }}
     />
@@ -184,7 +185,7 @@ function SkyPlannerFooter() {
         title: 'Sky Planner',
         description: t('skyPlannerDescription'),
         link: 'https://sky-planner.com/',
-        icon: '/ext/sky-planner.webp',
+        icon: withBasePath('/ext/sky-planner.webp'),
         creator: 'Silverfeelin',
       }}
     />
@@ -200,7 +201,7 @@ function SkyEventCalFooter() {
         title: 'Sky Event Calendar',
         description: 'Find information about current and upcoming Sky events',
         link: 'https://skydreamers.notion.site/Sky-Event-Calendar-FM-ec6e6134924048859b2a8410b0a8b20d',
-        icon: '/ext/sky-event-cal.webp',
+        icon: withBasePath('/ext/sky-event-cal.webp'),
         creator: 'Alvenoir',
       }}
     />

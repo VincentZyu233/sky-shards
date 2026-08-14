@@ -4,6 +4,7 @@ import { BiLinkExternal } from 'react-icons/bi';
 import { BsDiscord } from 'react-icons/bs';
 import { DailyConfig } from '../../data/remoteConfig';
 import { ShardInfo } from '../../data/shard';
+import { withBasePath } from '../../utils/basePath';
 
 interface ShardInfographicsProps {
   title: string;
@@ -65,7 +66,7 @@ export function ShardMemoryInfographic({ remoteDailyConfig, authorNames }: Shard
   const memory = remoteDailyConfig?.memory;
   if (!memory && memory !== 0) return null;
   const author = authorNames?.[remoteDailyConfig?.memoryBy!]!;
-  const imageUrl = `/infographics/memory_clement/${memory}.webp`;
+  const imageUrl = withBasePath(`/infographics/memory_clement/${memory}.webp`);
   const memoryStr = t(`shard:memories.${memory}`);
   return (
     <ShardInfographics
@@ -102,8 +103,8 @@ export function ShardMapInfographic({ info, remoteDailyConfig, authorNames }: Sh
   const author = variationBy && authorNames?.[variationBy];
   const imageUrl =
     info.numVarient > 1 && (variation || variation === 0)
-      ? `/infographics/map_varient_clement/${info.map}.${remoteDailyConfig?.variation}.webp`
-      : `/infographics/map_clement/${info.map}.webp`;
+      ? withBasePath(`/infographics/map_varient_clement/${info.map}.${remoteDailyConfig?.variation}.webp`)
+      : withBasePath(`/infographics/map_clement/${info.map}.webp`);
   return (
     <ShardInfographics
       title="Clement's Map"
@@ -132,7 +133,7 @@ interface ShardDataInfographic {
 }
 
 export function ShardDataInfographic({ info }: ShardDataInfographic) {
-  const data = `/infographics/data_gale/${info.map}.webp`;
+  const data = withBasePath(`/infographics/data_gale/${info.map}.webp`);
   return (
     <ShardInfographics
       title="Gale's Shard Data"

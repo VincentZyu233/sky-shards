@@ -1,20 +1,20 @@
-# Sky Shard Web Application
+# 🌠 Sky Shard Web Application
 
 [Open App](https://sky-shards.pages.dev)
 
-## Description
+## 📝 Description
 
 Compute the color, time and location of [Shard Eruptions](https://sky-children-of-the-light.fandom.com/wiki/Shard_Eruptions) in the Game "Sky: Children of the Light".
 
 Shard is computed as described in [Shard Prediction Rule](./ShardPredictionRule.md) and calculated [here](./src/data/shard.ts)
 
-## Localizations
+## 🌐 Localizations
 
 Google sheet link: [Sky Shard Translation](https://docs.google.com/spreadsheets/d/16eSANTI310SY8uWjsjbxNBzyD-49hwF3OGYRkFPykoo/edit)
 
 Languages will be downloaded into `src/i18n/locales.json` from Google Sheets when the app is built.
 
-## Routes
+## 🧭 Routes
 
 Processed by [Setting Context](./src/context/Settings.tsx)
 
@@ -28,7 +28,7 @@ Processed by [Setting Context](./src/context/Settings.tsx)
   - `/:lang/2022/12/31` Shard Eruption page for 31st December 2022
   - `/:lang/2023/1/1` Shard Eruption page for 1st January 2023
 
-### Query Parameters
+### ⚙️ Query Parameters
 
 - `gsTrans` - Fetch Google Sheet Translation (`1`|`0`)
 - `twelveHour` - Display time in 12-hour format (`true` | `false` | `system` )
@@ -37,14 +37,14 @@ Processed by [Setting Context](./src/context/Settings.tsx)
 - `fontSize` - Font size (1 decimal point) (`number`)
 - `numCols` - Number of columns in the table in date selector (`number`)
 
-## Development
+## 🛠️ Development
 
 Requirements:
 
 - [Node.js](https://nodejs.org/en/) >= 18
 - [pnpm](https://pnpm.io/) >= 8
 
-### Commands
+### 💻 Commands
 
 Enable Corepack for pnpm
 
@@ -70,15 +70,20 @@ Build the project
 pnpm build
 ```
 
-## Feedback & Issues
+## 🚀 Deployment
+
+GitHub Pages and Cloudflare Pages deployment setup is documented in [deploy-pages.md](./.github/workflows/deploy-pages.md).
+
+## 💬 Feedback & Issues
 
 Feel free to open an issue or pull request for any feedback or issues. No need to be formal, just let me know what you think. I will try to respond as soon as possible.
 
-## License
+## 📄 License
 
 TL;DR: You can do whatever you want with the code. A link back to this repository or website would be appreciated.
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
+>
 > Assets located in `/public/infographics/*`, `/public/ext/*` & `/public/emojis/*` are not covered by this license as they are not created by me.
 
 [MIT](./LICENSE)

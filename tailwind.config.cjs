@@ -12,6 +12,9 @@ module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   plugins: [require('daisyui')],
   theme: {
+    fontFamily: {
+      sans: ['LXGW WenKai', ...defaultTheme.fontFamily.sans],
+    },
     screens: {
       'xs': '375px',
       ...defaultTheme.screens,

@@ -1,0 +1,134 @@
+name: Deploy Pages
+
+on:
+  push:
+    branches:
+      - production
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deployment-keyword:
+    name: Check deployment keyword
+    runs-on: ubuntu-latest
+    outputs:
+      should-deploy: ${{ steps.keyword.outputs.should-deploy }}
+    steps:
+      - name: Check commit message
+        id: keyword
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]] ||
+             [[ "$COMMIT_MESSAGE" == *"deploy-pages"* ]] ||
+             [[ "$COMMIT_MESSAGE" == *"deploypages"* ]]; then
+            echo "should-deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should-deploy=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy-github-pages:
+    name: Deploy GitHub Pages
+    needs: deployment-keyword
+    if: needs.deployment-keyword.outputs.should-deploy == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          cache: true
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download translations
+        run: pnpm downloadTrans
+
+      - name: Build for GitHub Pages
+        env:
+          DEPLOY_BASE: /sky-shards/
+        run: pnpm buildonly
+
+      - name: Add SPA fallback
+        run: cp dist/index.html dist/404.html
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+  deploy-cloudflare-pages:
+    name: Deploy Cloudflare Pages
+    needs: deployment-keyword
+    if: needs.deployment-keyword.outputs.should-deploy == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    environment:
+      name: cloudflare-pages
+      url: ${{ steps.deployment.outputs.deployment-url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          cache: true
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download translations
+        run: pnpm downloadTrans
+
+      - name: Build for Cloudflare Pages
+        env:
+          DEPLOY_BASE: /
+        run: pnpm buildonly
+
+      - name: Deploy Cloudflare Pages
+        id: deployment
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: >-
+            pages deploy dist
+            --project-name=sky-shards-vincentzyu233-fork
+            --branch=production
+            --commit-hash=${{ github.sha }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          packageManager: pnpm

@@ -7,6 +7,7 @@ import { ClockNow } from '../../components/Clock';
 import { useModal } from '../../context/ModalContext';
 import { useNow } from '../../context/Now';
 import { useSettings } from '../../context/Settings';
+import { withBasePath } from '../../utils/basePath';
 import DateSelectionModal from '../Modals/DateSelector';
 import SettingsModal from '../Modals/Settings';
 
@@ -77,10 +78,10 @@ export default function Header() {
     >
       <a
         className='max-md:group-data-[expand-menu=true]:hidden'
-        href='/'
+        href={withBasePath('/')}
         onClick={e => (navigateToday(), e.preventDefault())}
       >
-        <img src='/icons/appName.webp' alt='Sky Shards' className='h-7 w-auto md:h-10' />
+        <img src={withBasePath('/icons/appName.webp')} alt='Sky Shards' className='h-7 w-auto md:h-10' />
       </a>
 
       <HeaderDateTime navigateToday={navigateToday} />

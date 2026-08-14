@@ -14,6 +14,7 @@ import i18next from 'i18next';
 import { DateTime, Settings as LuxonSettings } from 'luxon';
 import useLegacyEffect from '../hooks/useLegacyEffect';
 import { languageCode } from '../i18n';
+import { stripBasePath, withBasePath } from '../utils/basePath';
 
 const appZone = 'America/Los_Angeles';
 
@@ -357,6 +358,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   const settings = useMemo(() => {
     const url = new URL(window.location.href);
+    url.pathname = stripBasePath(url.pathname);
     const parsed = validifySettings(isOldUrlFormat(url) ? parseOldUrl(url) : parseNewUrl(url));
     return { ...resolvedLocal, ...parsed };
   }, [resolvedLocal]);
@@ -377,7 +379,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
           path += '/' + settings.date.toFormat('yyyy/MM/dd');
         }
 
-        const url = new URL(path, origin);
+        const url = new URL(withBasePath(path), origin);
         const link = document.querySelector('link[rel="canonical"]');
         if (link) link.setAttribute('href', url.toString());
         else {
@@ -443,6 +445,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     // Listen for popstate events to update the settings
     const handlePopState = () => {
       const url = new URL(window.location.href);
+      url.pathname = stripBasePath(url.pathname);
       const parsed = { ...getDefault(), ...parseNewUrl(url) };
 
       const diff = Object.fromEntries(

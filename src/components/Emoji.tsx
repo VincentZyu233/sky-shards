@@ -1,3 +1,5 @@
+import { withBasePath } from '../utils/basePath';
+
 interface EmojiDefinition {
   path: string;
   alt: string | undefined;
@@ -31,7 +33,7 @@ export function Emoji({ name, className = '' }: EmojiProp) {
   return (
     <img
       className={`inline h-[0.9em] w-[0.9em] align-baseline leading-[1em] ${className}`}
-      src={emojiDefinitions[name].path}
+      src={withBasePath(emojiDefinitions[name].path)}
       alt={emojiDefinitions[name].alt ?? name}
     />
   );

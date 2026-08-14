@@ -1,4 +1,4 @@
-# Shard Prediction Rule
+# 🔮 Shard Prediction Rule
 
 <!-- Disclaimer -->
 
@@ -6,7 +6,7 @@ Disclaimer: This is not an official rule. It is a community effort to predict th
 
 ---
 
-### Shard Eruption Time
+### ⏰ Shard Eruption Time
 
 1st shard event start
 
@@ -20,7 +20,7 @@ Shard for 4 hours, 3 times a day every
 - Black Shard: 8 hours
 - Red Shard: 6 hours
 
-### Shard Eruption Location
+### 📍 Shard Eruption Location
 
 - Black Shard:
   - Prairie: Village Islands, Butterfly Field
@@ -37,11 +37,11 @@ Shard for 4 hours, 3 times a day every
 
 ---
 
-# Original method
+# 🧮 Original method
 
-## Step 1: First landing time of Shard
+## ⏱️ Step 1: First landing time of Shard
 
-### Method 1: 4 & 6 days cycle
+### 🔁 Method 1: 4 & 6 days cycle
 
 - Black Shard
   - 2:10 every 4 days from 2nd of every month
@@ -51,13 +51,13 @@ Shard for 4 hours, 3 times a day every
   - 2:20 every 6 days from 3rd of every month
   - 3:30 every 6 days from 5th of every month
 
-### Method 2: 12 days cycle
+### 🔄 Method 2: 12 days cycle
 
 12 days cycle from the 1st of every month
 
 7:40, 2:10, 2:20, 1:50, 3:30, 2:10, 7:40, 1:50, 2:20, 2:10, 3:30, 1:50
 
-## Step 2: Location of Shard
+## 🗺️ Step 2: Location of Shard
 
 | Realm     | 1:50             | 2:10             | 7:40              | 2:20              | 3:30              |
 | --------- | ---------------- | ---------------- | ----------------- | ----------------- | ----------------- |
@@ -67,7 +67,7 @@ Shard for 4 hours, 3 times a day every
 | Wasteland | Broken Temple    | Battlefield      | Graveyard         | Crabfield         | Forgotten Ark     |
 | Vault     | Starlight Desert | Starlight Desert | Jellyfish Cove    | Jellyfish Cove    | Jellyfish Cove    |
 
-## Step 3: No Shad Day??
+## 💤 Step 3: No Shad Day??
 
 Shard will not land on the following day of the week:
 
@@ -79,7 +79,7 @@ Shard will not land on the following day of the week:
 
 ---
 
-## Credits
+## 🙏 Credits
 
 - Galerowfylery#1310
 - RandomZhii#4275

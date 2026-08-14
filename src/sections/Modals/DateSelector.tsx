@@ -7,6 +7,7 @@ import type { ModalProps } from '../../context/ModalContext';
 import { useSettings } from '../../context/Settings';
 import { getShardInfo } from '../../data/shard';
 import type { ShardInfo } from '../../data/shard';
+import { withBasePath } from '../../utils/basePath';
 
 export function DateSelectionModal({ hideModal }: ModalProps) {
   const { t } = useTranslation(['dateSelector', 'skyRealms', 'skyMaps']);
@@ -100,7 +101,7 @@ export function DateSelectionModal({ hideModal }: ModalProps) {
 
           return (
             <a
-              href={`/${lang}/${date.toFormat('yyyy/MM/dd')}`}
+              href={withBasePath(`/${lang}/${date.toFormat('yyyy/MM/dd')}`)}
               key={date.day}
               title={date.toLocaleString({ month: 'short', day: 'numeric', year: 'numeric' })}
               data-shard={!hasShard ? 'none' : ''}

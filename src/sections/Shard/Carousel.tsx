@@ -9,6 +9,7 @@ import { useSettings } from '../../context/Settings';
 import { useRemoteConfig } from '../../data/remoteConfig';
 import { getShardInfo } from '../../data/shard';
 import useLegacyEffect from '../../hooks/useLegacyEffect';
+import { withBasePath } from '../../utils/basePath';
 import WarningModal from '../Modals/Warning';
 import { ShardCountdownSection } from './Countdown';
 import ShardInfoSection from './Info';
@@ -31,7 +32,7 @@ export default function ShardCarousel() {
   useEffect(() => ((prevDate.current = date), undefined), [date]);
 
   const { showModal } = useModal();
-  const daysDiff = date.diffNow('days').days 
+  const daysDiff = date.diffNow('days').days;
   const remoteConfig = useRemoteConfig(daysDiff < -2 || daysDiff > 0);
 
   const remoteDailyConfig = useMemo(
@@ -112,7 +113,7 @@ export default function ShardCarousel() {
                 {legTimeline && <ShardProgressSection info={info} />}
                 <ShardCountdownSection info={info} />
                 <small
-                  className='flex cursor-pointer flex-col items-center justify-center font-serif text-xs [@media_(min-height:_640px)]:xl:text-lg'
+                  className='flex cursor-pointer flex-col items-center justify-center text-xs [@media_(min-height:_640px)]:xl:text-lg'
                   onClick={() => {
                     const carousel = carouselRef.current;
                     const content = carousel?.children[0];
@@ -140,8 +141,8 @@ export default function ShardCarousel() {
         </motion.main>
       </AnimatePresence>
       <a
-        href={`/${lang}/${ytd.toFormat('yyyy/MM/dd')}`}
-        className='relative col-start-1 row-start-1 flex cursor-pointer flex-col-reverse items-center justify-center font-serif text-xs [writing-mode:vertical-rl] [@media_(min-height:_640px)]:xl:text-lg'
+        href={withBasePath(`/${lang}/${ytd.toFormat('yyyy/MM/dd')}`)}
+        className='relative col-start-1 row-start-1 flex cursor-pointer flex-col-reverse items-center justify-center text-xs [writing-mode:vertical-rl] [@media_(min-height:_640px)]:xl:text-lg'
         onClick={e => {
           e.preventDefault();
           setSettings({ date: ytd });
@@ -151,8 +152,8 @@ export default function ShardCarousel() {
         <BsChevronRight className='m-0' strokeWidth={'0.1rem'} />
       </a>
       <a
-        href={`/${lang}/${tmr.toFormat('yyyy/MM/dd')}`}
-        className='relative col-start-3 row-start-1 flex cursor-pointer flex-col items-center justify-center font-serif text-xs [writing-mode:vertical-rl] [@media_(min-height:_640px)]:xl:text-lg'
+        href={withBasePath(`/${lang}/${tmr.toFormat('yyyy/MM/dd')}`)}
+        className='relative col-start-3 row-start-1 flex cursor-pointer flex-col items-center justify-center text-xs [writing-mode:vertical-rl] [@media_(min-height:_640px)]:xl:text-lg'
         onClick={e => {
           e.preventDefault();
           setSettings({ date: tmr });

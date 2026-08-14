@@ -2,13 +2,22 @@ import react from '@vitejs/plugin-react-swc';
 import { readFile, stat } from 'fs/promises';
 import { defineConfig, normalizePath } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
-import manifest from './manifest';
+import createManifest from './manifest';
 import packageJson from './package.json';
+
+function normalizeBase(base: string) {
+  const path = base.trim().replace(/^\/+|\/+$/g, '');
+  return path ? `/${path}/` : '/';
+}
+
+const base = normalizeBase(process.env.DEPLOY_BASE ?? '/');
 
 process.env.VITE_VERSION = packageJson.version;
 process.env.VITE_VERSION_MINOR = packageJson.version.split('.').slice(0, 2).join('.');
-process.env.VITE_GIT_BRANCH = process.env.CF_PAGES_BRANCH;
-process.env.VITE_GIT_COMMIT = process.env.CF_PAGES_COMMIT_SHA;
+const gitBranch = process.env.CF_PAGES_BRANCH ?? process.env.GITHUB_REF_NAME;
+const gitCommit = process.env.CF_PAGES_COMMIT_SHA ?? process.env.GITHUB_SHA;
+if (gitBranch) process.env.VITE_GIT_BRANCH = gitBranch;
+if (gitCommit) process.env.VITE_GIT_COMMIT = gitCommit;
 
 console.log('Version', process.env.VITE_VERSION);
 console.log('Branch', process.env.VITE_GIT_BRANCH);
@@ -25,7 +34,7 @@ if (!process.env.VITE_SHARD_REMOTE_URL) {
 
 // Check if the translation file (locales.json) exists
 try {
-  stat(normalizePath('./src/i18n/locales.json'));
+  await stat(normalizePath('./src/i18n/locales.json'));
 } catch (e) {
   console.error('locales.json not found, run pnpm downloadTrans to download it');
   process.exit(1);
@@ -33,6 +42,7 @@ try {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base,
   build: {
     rollupOptions: {
       output: {
@@ -57,7 +67,7 @@ export default defineConfig({
         'emojis/*.webp',
         'ext/*',
       ],
-      manifest,
+      manifest: createManifest(base),
       workbox: {
         runtimeCaching: [
           {

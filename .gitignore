@@ -2,6 +2,10 @@
 dist
 dist-ssr
 
+# Temporary Folders
+temp
+tmp
+
 # Environment Variables
 .env*
 !.env.example

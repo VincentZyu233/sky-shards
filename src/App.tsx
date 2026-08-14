@@ -7,6 +7,7 @@ import useFeedbackFormUrl from './hooks/useFeedbackFom';
 import Footer from './sections/App/Footer';
 import Header from './sections/App/Header';
 import ShardCarousel from './sections/Shard/Carousel';
+import { withBasePath } from './utils/basePath';
 
 LuxonSettings.defaultLocale = 'en';
 
@@ -17,7 +18,7 @@ function ErrorFallback({ error }: FallbackProps) {
   });
   return (
     <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform text-center [&>*]:mb-2'>
-      <img src='/icons/appName.webp' alt='Sky Shards' className='mx-auto h-12' />
+      <img src={withBasePath('/icons/appName.webp')} alt='Sky Shards' className='mx-auto h-12' />
       <p className='text-sm'>Sorry, the app crashed</p>
       <p className='text-sm'>Please submit a bug report</p>
       <div className='mt-2 flex flex-row flex-wrap items-center justify-center gap-2'>
