@@ -1,0 +1,3 @@
+# Include tracked Markdown files in GitHub Linguist language statistics.
+*.md linguist-detectable -linguist-documentation
+*.markdown linguist-detectable -linguist-documentation
