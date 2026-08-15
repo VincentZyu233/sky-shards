@@ -47,7 +47,7 @@ export function ShardCountdownSection({ info }: { info: ShardInfo }) {
             dateTime={countdownTo?.toISO({ suppressMilliseconds: true }) ?? undefined}
           >
             <strong>{t('skyTime')}</strong>
-            <small className='hidden tall:block'>(America/Los_Angeles)</small>
+            <small className='hidden tall:block'>({info.eventZone})</small>
             <Calendar date={countdownTo!} className='block font-bold opacity-80' relFontSize={0.8} />
             <StaticClock time={countdownTo} className='block font-bold' />
           </time>

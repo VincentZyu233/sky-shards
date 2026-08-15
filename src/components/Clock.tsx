@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { DateTime, Duration, Settings as LuxonSettings } from 'luxon';
 import { useNow } from '../context/Now';
 import { useSettings } from '../context/Settings';
+import { getServerZone } from '../data/server';
 
 interface ClockProp {
   time?: DateTime;
@@ -27,7 +28,7 @@ export function StaticClock({
   strikeThrough,
 }: ClockProp) {
   const { t } = useTranslation('durationFmts');
-  const { twelveHourMode } = useSettings();
+  const { twelveHourMode, server } = useSettings();
   if (!duration && !time) throw new Error('Time component requires either time or duration prop');
   if (time && duration) throw new Error('Time component requires either time or duration prop, not both');
   if (time && time.locale !== LuxonSettings.defaultLocale) {
@@ -47,7 +48,7 @@ export function StaticClock({
             : 'hms',
         ),
       )
-    : time?.setZone(convertTo === 'local' ? 'default' : 'America/Los_Angeles')?.toLocaleString({
+    : time?.setZone(convertTo === 'local' ? 'default' : getServerZone(server))?.toLocaleString({
         hourCycle: twelveHourMode === 'system' ? undefined : twelveHourMode === 'true' ? 'h12' : 'h23',
         hour: '2-digit',
         minute: '2-digit',

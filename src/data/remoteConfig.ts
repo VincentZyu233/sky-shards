@@ -55,8 +55,8 @@ const fetcher = (file: 'minified.json' | 'all.json') =>
     res.json(),
   ) as Promise<RemoteConfig>;
 
-export function useRemoteConfig(requireFull: boolean = false) {
-  const { data: config } = useSWR(() => (requireFull ? 'all.json' : 'minified.json'), fetcher, {
+export function useRemoteConfig(requireFull: boolean = false, enabled: boolean = true) {
+  const { data: config } = useSWR(enabled ? (requireFull ? 'all.json' : 'minified.json') : null, fetcher, {
     refreshInterval: 20 * 60 * 1000, // 20 minutes
     keepPreviousData: true,
     dedupingInterval: 5 * 60 * 1000, // 5 minutes

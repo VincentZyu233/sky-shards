@@ -7,6 +7,7 @@ import { ClockNow } from '../../components/Clock';
 import { useModal } from '../../context/ModalContext';
 import { useNow } from '../../context/Now';
 import { useSettings } from '../../context/Settings';
+import { GameServer, getServerZone } from '../../data/server';
 import { withBasePath } from '../../utils/basePath';
 import DateSelectionModal from '../Modals/DateSelector';
 import SettingsModal from '../Modals/Settings';
@@ -66,27 +67,50 @@ export function HeaderButton({
 
 export default function Header() {
   const { t } = useTranslation(['application', 'dateSelector', 'settings']);
-  const { setSettings } = useSettings();
+  const { server, setSettings } = useSettings();
   const { showModal } = useModal();
-  const navigateToday = () => setSettings({ date: DateTime.local({ zone: 'America/Los_Angeles' }) });
+  const navigateToday = () => setSettings({ date: DateTime.local({ zone: getServerZone(server) }) });
   const [expandMenu, setExpandMenu] = useState(false);
+  const servers: { value: GameServer; label: string }[] = [
+    { value: 'tgc_global', label: '🌍 TGC Global 那游公司国际服' },
+    { value: 'netease_cn', label: '🇨🇳 NetEase CN 网易国服' },
+  ];
 
   return (
     <header
-      className='group glass flex max-h-min flex-row flex-nowrap items-center justify-between px-4'
+      className='group glass flex max-h-min flex-row flex-nowrap items-center justify-between gap-1 px-2 sm:px-4'
       data-expand-menu={expandMenu}
     >
-      <a
-        className='max-md:group-data-[expand-menu=true]:hidden'
-        href={withBasePath('/')}
-        onClick={e => (navigateToday(), e.preventDefault())}
-      >
-        <img src={withBasePath('/icons/appName.webp')} alt='Sky Shards' className='h-7 w-auto md:h-10' />
-      </a>
+      <div className='flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-2 max-md:group-data-[expand-menu=true]:hidden'>
+        <a href={`${withBasePath('/')}?server=${server}`} onClick={e => (navigateToday(), e.preventDefault())}>
+          <img src={withBasePath('/icons/appName.webp')} alt='Sky Shards' className='h-7 w-auto md:h-10' />
+        </a>
+        <div
+          role='group'
+          aria-label='Game server / 游戏服务器'
+          className='flex h-10 shrink-0 flex-col overflow-hidden rounded-md border border-white/30 bg-black/20 shadow-sm backdrop-blur-sm sm:h-7 sm:flex-row md:h-8'
+        >
+          {servers.map(option => {
+            const active = server === option.value;
+            return (
+              <button
+                key={option.value}
+                type='button'
+                aria-pressed={active}
+                title={option.label}
+                className='h-1/2 whitespace-nowrap px-1.5 text-[10px] font-semibold leading-none transition-colors aria-pressed:bg-primary aria-pressed:text-primary-content sm:h-full sm:px-2 sm:text-xs'
+                onClick={() => setSettings({ server: option.value })}
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       <HeaderDateTime navigateToday={navigateToday} />
 
-      <div className='flex flex-row gap-x-2'>
+      <div className='flex shrink-0 flex-row gap-x-1 sm:gap-x-2'>
         <HeaderButton
           title={t('dateSelector:title')}
           onClick={() => {

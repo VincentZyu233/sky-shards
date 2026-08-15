@@ -26,27 +26,30 @@ export default function ShardCarousel() {
   const { t, i18n } = useTranslation('shardCarousel');
   const [applyOverride, setApplyOverride] = useState(true);
 
-  const { date, lang, fontSize, lastWarn, legTimeline, setSettings } = useSettings();
+  const { date, lang, fontSize, lastWarn, legTimeline, server, setSettings } = useSettings();
   const prevDate = useRef(date);
   const direction = useMemo(() => (prevDate.current < date ? 1 : -1), [date]);
   useEffect(() => ((prevDate.current = date), undefined), [date]);
 
   const { showModal } = useModal();
   const daysDiff = date.diffNow('days').days;
-  const remoteConfig = useRemoteConfig(daysDiff < -2 || daysDiff > 0);
+  const remoteConfig = useRemoteConfig(daysDiff < -2 || daysDiff > 0, server === 'tgc_global');
 
   const remoteDailyConfig = useMemo(
-    () => remoteConfig?.dailiesMap[date.toISODate() as string] ?? undefined,
-    [remoteConfig, date],
+    () => (server === 'tgc_global' ? remoteConfig?.dailiesMap[date.toISODate() as string] : undefined),
+    [remoteConfig, date, server],
   );
 
   const { info, tmr, ytd } = useMemo(
     () => ({
-      info: getShardInfo(date, (applyOverride && remoteDailyConfig?.override) || undefined),
+      info: getShardInfo(date, {
+        server,
+        override: server === 'tgc_global' ? (applyOverride && remoteDailyConfig?.override) || undefined : undefined,
+      }),
       tmr: date.plus({ days: 1 }),
       ytd: date.minus({ days: 1 }),
     }),
-    [date.day, date.month, date.year, applyOverride, remoteDailyConfig],
+    [date.day, date.month, date.year, server, applyOverride, remoteDailyConfig],
   );
   const carouselRef = useRef<HTMLDivElement>(null);
 
@@ -61,8 +64,8 @@ export default function ShardCarousel() {
 
   useLegacyEffect(() => {
     if (remoteConfig && remoteConfig.warning) {
-      const last = DateTime.fromSeconds(lastWarn).setZone('America/Los_Angeles');
-      const shouldWarn = !DateTime.now().setZone('America/Los_Angeles').hasSame(last, 'day');
+      const last = DateTime.fromSeconds(lastWarn).setZone(info.eventZone);
+      const shouldWarn = !DateTime.now().setZone(info.eventZone).hasSame(last, 'day');
       if (shouldWarn) {
         showModal({
           children: WarningModal,
@@ -141,7 +144,7 @@ export default function ShardCarousel() {
         </motion.main>
       </AnimatePresence>
       <a
-        href={withBasePath(`/${lang}/${ytd.toFormat('yyyy/MM/dd')}`)}
+        href={`${withBasePath(`/${lang}/${ytd.toFormat('yyyy/MM/dd')}`)}?server=${server}`}
         className='relative col-start-1 row-start-1 flex cursor-pointer flex-col-reverse items-center justify-center gap-2 text-xs [@media_(min-height:_640px)]:xl:text-lg'
         onClick={e => {
           e.preventDefault();
@@ -152,7 +155,7 @@ export default function ShardCarousel() {
         <BsChevronRight className='m-0 shrink-0' strokeWidth={'0.1rem'} />
       </a>
       <a
-        href={withBasePath(`/${lang}/${tmr.toFormat('yyyy/MM/dd')}`)}
+        href={`${withBasePath(`/${lang}/${tmr.toFormat('yyyy/MM/dd')}`)}?server=${server}`}
         className='relative col-start-3 row-start-1 flex cursor-pointer flex-col items-center justify-center gap-2 text-xs [@media_(min-height:_640px)]:xl:text-lg'
         onClick={e => {
           e.preventDefault();

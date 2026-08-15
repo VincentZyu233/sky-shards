@@ -1,13 +1,14 @@
 {
   "name": "sky-shards",
   "private": true,
-  "version": "8.3.3-rc.1+20260815",
+  "version": "8.4.0-beta.1+20260816",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "pnpm downloadTrans && tsc && vite build",
     "buildonly": "tsc && vite build",
     "preview": "vite preview",
+    "test": "vitest run",
     "downloadTrans": "curl -Lo src/i18n/locales.json https://script.google.com/macros/s/AKfycbxWmAhleoWLtyVpXgICkkGUdAZKi_JPkuSxJ243H33316scaRFgY0kEq6UR3iPajsq4/exec"
   },
   "dependencies": {
@@ -48,6 +49,7 @@
     "typescript": "^5.4.5",
     "vite": "^5.2.11",
     "vite-plugin-pwa": "^0.20.0",
+    "vitest": "^1.6.0",
     "workbox-build": "^7.1.0"
   },
   "packageManager": "pnpm@8.15.4"

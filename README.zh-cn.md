@@ -8,6 +8,23 @@
 
 碎片信息按照[碎片预测规则](./ShardPredictionRule.md)计算，具体计算逻辑位于[此处](./src/data/shard.ts)
 
+## 🌍 服务器能力差异
+
+使用 Logo 旁的服务器切换控件选择 `🌍 TGC Global 国际服` 或 `🇨🇳 NetEase CN 网易国服`。切换时会保留当前日历日期，同时按照所选服务器的规则和事件时区更新排期与倒计时。
+
+| 能力                                   | 国际服 | 国服 | 说明                                                                                                                |
+| -------------------------------------- | :----: | :--: | ------------------------------------------------------------------------------------------------------------------- |
+| 服务器专属的碎片日期、颜色、地点和时间 |   ✅   |  ✅  | 国际服使用 TGC 规则；国服使用移植自 [skyshard_calendar](https://github.com/ichozero/skyshard_calendar) 的网易排期。 |
+| 事件时区和本地时间转换                 |   ✅   |  ✅  | 国际服使用 `America/Los_Angeles`；国服使用 `Asia/Shanghai`。                                                        |
+| 区域名称、地图名称和通用地图图鉴       |   ✅   |  ✅  | 这些内容描述两服共享的游戏本体，因此会复用。                                                                        |
+| 碎片奖励                               |   ✅   |  ✅  | 两个服务器分别采用对应规则来源提供的奖励数值。                                                                      |
+| 特殊日期的社区人工纠错（`override`）   |   ✅   |  ❌  | 当前远程纠错来自国际服观测，不能可靠地套用到国服。                                                                  |
+| 当天经过确认的精确落点（`variation`）  |   ✅   |  ❌  | 国服显示通用地图，并将精确落点标记为待确认。                                                                        |
+| 当天经过确认的远古回忆（`memory`）     |   ✅   |  ❌  | 国服保留游戏内六种回忆的定义，但将当天选中的回忆标记为待确认。                                                      |
+| 实时碎片异常警告                       |   ✅   |  ❌  | 当前警告源面向国际服，不能代表网易国服的运营状态。                                                                  |
+
+表中的 ❌ 表示本站暂时没有可靠的国服每日观测数据源，并不表示国服客户端中不存在对应的落点变体、远古回忆或异常状态。
+
 ## 🌐 本地化
 
 Google 表格链接：[Sky Shard Translation](https://docs.google.com/spreadsheets/d/16eSANTI310SY8uWjsjbxNBzyD-49hwF3OGYRkFPykoo/edit)
@@ -30,6 +47,7 @@ Google 表格链接：[Sky Shard Translation](https://docs.google.com/spreadshee
 
 ### ⚙️ 查询参数
 
+- `server` - 游戏服务器（`tgc_global` | `netease_cn`）；缺失或无效值会被规范化为 `tgc_global`
 - `gsTrans` - 获取 Google 表格翻译（`1` | `0`）
 - `twelveHour` - 以 12 小时制显示时间（`true` | `false` | `system`）
 - `lightMode` - 浅色模式（`true` | `false` | `system`）

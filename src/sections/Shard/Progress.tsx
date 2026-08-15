@@ -58,7 +58,7 @@ export function ShardProgress({ info }: ShardProgressProps) {
         })}
       </>
     );
-  }, [info.offset, info.isRed, LuxonSettings.defaultZone.name, i18n.language]);
+  }, [info.occurrences, info.isRed, LuxonSettings.defaultZone.name, i18n.language]);
 
   return useMemo(
     () => (
@@ -95,7 +95,7 @@ export function ShardProgress({ info }: ShardProgressProps) {
       now.day,
       now.hour,
       Math.floor(now.minute / 10),
-      info.offset,
+      info.occurrences,
       info.isRed,
       LuxonSettings.defaultZone.name,
       i18n.language,

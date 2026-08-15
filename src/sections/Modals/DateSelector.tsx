@@ -5,26 +5,27 @@ import { DateTime } from 'luxon';
 import { Settings as LuxonSettings } from 'luxon';
 import type { ModalProps } from '../../context/ModalContext';
 import { useSettings } from '../../context/Settings';
+import { getServerZone } from '../../data/server';
 import { getShardInfo } from '../../data/shard';
 import type { ShardInfo } from '../../data/shard';
 import { withBasePath } from '../../utils/basePath';
 
 export function DateSelectionModal({ hideModal }: ModalProps) {
   const { t } = useTranslation(['dateSelector', 'skyRealms', 'skyMaps']);
-  const today = DateTime.local({ zone: 'America/Los_Angeles' });
-
-  const { date: selectedDate, lang, numCols, setSettings } = useSettings();
+  const { date: selectedDate, lang, numCols, server, setSettings } = useSettings();
+  const eventZone = getServerZone(server);
+  const today = DateTime.local({ zone: eventZone });
 
   const navigateDay = useCallback((date: DateTime) => setSettings({ date }), [setSettings]);
   const [{ year, month }, setYearMonth] = useState(() => ({ year: selectedDate.year, month: selectedDate.month }));
 
-  const startOfMth = DateTime.local(year, month, 1, { zone: 'America/Los_Angeles' });
+  const startOfMth = DateTime.local(year, month, 1, { zone: eventZone });
   const endOfMth = startOfMth.endOf('month');
   const daysInMonth = startOfMth.daysInMonth!;
 
   const shardInfos: [DateTime, ShardInfo][] = Array.from({ length: daysInMonth }, (_, i) => {
     const date = startOfMth.plus({ days: i });
-    return [date, getShardInfo(date)];
+    return [date, getShardInfo(date, { server })];
   });
 
   const nextMonth = startOfMth.plus({ months: 1 });
@@ -101,7 +102,7 @@ export function DateSelectionModal({ hideModal }: ModalProps) {
 
           return (
             <a
-              href={withBasePath(`/${lang}/${date.toFormat('yyyy/MM/dd')}`)}
+              href={`${withBasePath(`/${lang}/${date.toFormat('yyyy/MM/dd')}`)}?server=${server}`}
               key={date.day}
               title={date.toLocaleString({ month: 'short', day: 'numeric', year: 'numeric' })}
               data-shard={!hasShard ? 'none' : ''}

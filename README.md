@@ -8,6 +8,23 @@ Compute the color, time and location of [Shard Eruptions](https://sky-children-o
 
 Shard is computed as described in [Shard Prediction Rule](./ShardPredictionRule.md) and calculated [here](./src/data/shard.ts)
 
+## 🌍 Server Capabilities
+
+Use the server switch beside the logo to choose `🌍 TGC Global 国际服` or `🇨🇳 NetEase CN 网易国服`. The selected calendar date is preserved when switching, while schedules and countdowns change to the selected server's rules and event timezone.
+
+| Capability                                               | Global | CN  | Notes                                                                                                                                |
+| -------------------------------------------------------- | :----: | :-: | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Server-specific shard dates, colors, locations and times |   ✅   | ✅  | Global uses TGC rules; CN uses the NetEase schedule adapted from [skyshard_calendar](https://github.com/ichozero/skyshard_calendar). |
+| Event timezone and local-time conversion                 |   ✅   | ✅  | Global uses `America/Los_Angeles`; CN uses `Asia/Shanghai`.                                                                          |
+| Realm names, map names and general map infographics      |   ✅   | ✅  | These describe shared game content and are reused across both servers.                                                               |
+| Shard rewards                                            |   ✅   | ✅  | Each server uses the reward values provided by its corresponding rules.                                                              |
+| Community correction for an exceptional day (`override`) |   ✅   | ❌  | The current remote corrections are observations of Global and cannot safely be applied to CN.                                        |
+| Confirmed exact landing point (`variation`)              |   ✅   | ❌  | CN shows the general map and marks the exact location as unconfirmed.                                                                |
+| Confirmed Ancient Memory for the day (`memory`)          |   ✅   | ❌  | CN retains the six in-game memory definitions but marks the daily selection as unconfirmed.                                          |
+| Live shard incident warning                              |   ✅   | ❌  | The current warning feed is maintained for Global and does not represent NetEase operations.                                         |
+
+The ❌ marks mean that this website does not yet have a reliable CN daily observation source. They do not mean that the corresponding location variants, Ancient Memories or incident states do not exist in the CN game client.
+
 ## 🌐 Localizations
 
 Google sheet link: [Sky Shard Translation](https://docs.google.com/spreadsheets/d/16eSANTI310SY8uWjsjbxNBzyD-49hwF3OGYRkFPykoo/edit)
@@ -30,6 +47,7 @@ Processed by [Setting Context](./src/context/Settings.tsx)
 
 ### ⚙️ Query Parameters
 
+- `server` - Game server (`tgc_global` | `netease_cn`); missing or invalid values are normalized to `tgc_global`
 - `gsTrans` - Fetch Google Sheet Translation (`1`|`0`)
 - `twelveHour` - Display time in 12-hour format (`true` | `false` | `system` )
 - `lightMode` - Light mode (`true` | `false` | `system`)

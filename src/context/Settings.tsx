@@ -7,16 +7,15 @@ Query: gsTrans=1, lang=xx.
 
 new URL Format:
 Path: /, /{yyyy}/{MM}/{dd}, /{lang}/{yyyy}/{MM}/{dd},
-Query: gsTrans=1, twelveHour=(true|false|system), lightMode=(true|false|system), timezone.
+Query: server=(tgc_global|netease_cn), gsTrans=1, twelveHour=(true|false|system), lightMode=(true|false|system), timezone.
 */
 import { useState, useCallback, createContext, useContext, useMemo } from 'react';
 import i18next from 'i18next';
 import { DateTime, Settings as LuxonSettings } from 'luxon';
+import { dateInServerZone, GameServer, getServerZone, isGameServer, parseGameServer } from '../data/server';
 import useLegacyEffect from '../hooks/useLegacyEffect';
 import { languageCode } from '../i18n';
 import { stripBasePath, withBasePath } from '../utils/basePath';
-
-const appZone = 'America/Los_Angeles';
 
 const relDateMap = {
   eytd: -2,
@@ -38,12 +37,17 @@ interface SettingsOld {
   date?: DateTime;
   gsTrans?: boolean;
   lang?: string;
+  server?: GameServer;
 }
 
 function parseOldUrl(url: URL): SettingsOld {
   const ret: SettingsOld = {};
 
   const { pathname, searchParams } = url;
+  const server = parseGameServer(searchParams.get('server'));
+  const appZone = getServerZone(server);
+  ret.server = server;
+  ret.date = DateTime.now().setZone(appZone).startOf('day');
   if (searchParams.has('gsTrans')) ret.gsTrans = searchParams.get('gsTrans') === '1';
   if (searchParams.has('lang')) ret.lang = searchParams.get('lang')!;
 
@@ -92,6 +96,9 @@ function validifySettings(settings: Partial<SettingsNew>) {
   if ('lang' in settings && settings.lang && !(settings.lang in languageCode)) {
     delete settings.lang;
   }
+  if ('server' in settings && !isGameServer(settings.server)) {
+    delete settings.server;
+  }
 
   return settings;
 }
@@ -99,7 +106,12 @@ function validifySettings(settings: Partial<SettingsNew>) {
 function parseNewUrl(url: URL): SettingsNew {
   const ret: SettingsNew = {};
 
-  let { pathname, searchParams } = url;
+  let { pathname } = url;
+  const { searchParams } = url;
+  const server = parseGameServer(searchParams.get('server'));
+  const appZone = getServerZone(server);
+  ret.server = server;
+  ret.date = DateTime.now().setZone(appZone).startOf('day');
 
   // Clean up the pathname
   if (pathname.endsWith('/')) {
@@ -228,7 +240,7 @@ function setLocalStorageSettings(settings: Partial<SettingsNew>) {
   }
 }
 
-function getDefault(): Required<SettingsNew> {
+function getDefault(server: GameServer = 'tgc_global'): Required<SettingsNew> {
   let lang: string = 'en';
 
   if (navigator.language) {
@@ -257,7 +269,7 @@ function getDefault(): Required<SettingsNew> {
   }
 
   return {
-    date: DateTime.now().setZone(appZone).startOf('day'),
+    date: DateTime.now().setZone(getServerZone(server)).startOf('day'),
     gsTrans: false,
     lang,
     lightMode: 'system',
@@ -266,7 +278,8 @@ function getDefault(): Required<SettingsNew> {
     fontSize: window.innerWidth > 768 && window.innerHeight > 500 ? '1.2' : '0.8',
     numCols: '5',
     lastWarn: 0,
-    legTimeline: false,
+    legTimeline: true,
+    server,
   };
 }
 
@@ -363,7 +376,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     return { ...resolvedLocal, ...parsed };
   }, [resolvedLocal]);
 
-  useLegacyEffect(() => {}, [settings.lightMode, settings.timezone, settings.lang]);
+  useLegacyEffect(() => {}, [settings.lightMode, settings.timezone, settings.lang, settings.server]);
 
   const setSettings: SetSettings = useCallback(
     (edits, setUrl = true, pushHistory = true) => {
@@ -371,24 +384,29 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       const origin = window.location.origin;
       internalSetSettings(old => {
         const isInit = edits === undefined;
-        const settings = isInit ? old : { ...old, ...edits };
+        let settings: Required<SettingsNew>;
+        if (isInit) {
+          const currentUrl = new URL(window.location.href);
+          currentUrl.pathname = stripBasePath(currentUrl.pathname);
+          const parsed = validifySettings(
+            isOldUrlFormat(currentUrl) ? parseOldUrl(currentUrl) : parseNewUrl(currentUrl),
+          );
+          settings = { ...old, ...parsed };
+        } else {
+          settings = { ...old, ...edits };
+        }
 
-        const def = getDefault();
+        if (edits?.server && edits.server !== old.server && !edits.date) {
+          settings.date = dateInServerZone(old.date, edits.server);
+        }
+
+        const def = getDefault(settings.server);
         let path = '/' + settings.lang;
         if (!settings.date.hasSame(def.date, 'day')) {
           path += '/' + settings.date.toFormat('yyyy/MM/dd');
         }
 
         const url = new URL(withBasePath(path), origin);
-        const link = document.querySelector('link[rel="canonical"]');
-        if (link) link.setAttribute('href', url.toString());
-        else {
-          const link = document.createElement('link');
-          link.rel = 'canonical';
-          link.href = url.toString();
-          document.head.appendChild(link);
-        }
-
         if (isInit || (edits && 'lightMode' in edits && edits.lightMode !== old.lightMode)) {
           // When lightMode is in edit
           setLightMode(settings.lightMode);
@@ -408,13 +426,18 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         }
 
         const urlParams = new URLSearchParams();
-        const localParams = new Map<string, any>();
+        const localParams = new Map<string, string | number | boolean>();
 
         Object.entries(settings).forEach(([key, val]) => {
           if (key === 'date') return;
+          if (key === 'server') {
+            urlParams.set(key, val as string);
+            localParams.set(key, String(val));
+            return;
+          }
           if (key === 'lang' && val !== def.lang) {
             // lang is handled in the path and localStorage
-            localParams.set(key, val);
+            localParams.set(key, String(val));
             return;
           }
           const dVal = def[key as Exclude<keyof SettingsNew, 'date' | 'lang'>];
@@ -422,12 +445,20 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
           const v = typeof val === 'boolean' ? (val ? '1' : '0') : val;
           if (d !== v) {
             urlParams.set(key, v as string);
-            localParams.set(key, v as string);
+            localParams.set(key, String(v));
           }
         });
 
         if (setUrl) {
           url.search = urlParams.toString();
+          const canonical = document.querySelector('link[rel="canonical"]');
+          if (canonical) canonical.setAttribute('href', url.toString());
+          else {
+            const link = document.createElement('link');
+            link.rel = 'canonical';
+            link.href = url.toString();
+            document.head.appendChild(link);
+          }
           if (pushHistory && !isInit) history.pushState(null, '', url);
           else history.replaceState(null, '', url);
         }
@@ -446,7 +477,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const handlePopState = () => {
       const url = new URL(window.location.href);
       url.pathname = stripBasePath(url.pathname);
-      const parsed = { ...getDefault(), ...parseNewUrl(url) };
+      const urlSettings = parseNewUrl(url);
+      const parsed = { ...getDefault(urlSettings.server), ...urlSettings };
 
       const diff = Object.fromEntries(
         Object.entries(parsed).filter(([key, val]) => settings[key as keyof SettingsNew] !== val),

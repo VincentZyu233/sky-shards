@@ -1,6 +1,8 @@
 import { CSSProperties, useMemo } from 'react';
 import { DateTime, Settings as LuxonSettings } from 'luxon';
 import { useNow } from '../context/Now';
+import { useSettings } from '../context/Settings';
+import { getServerZone } from '../data/server';
 
 interface CalendarProp {
   date: DateTime;
@@ -22,6 +24,7 @@ export function Calendar({
   allowWrap,
   inline,
 }: CalendarProp) {
+  const { server } = useSettings();
   return useMemo(() => {
     const style = relFontSize ? ({ fontSize: `${relFontSize}em` } as CSSProperties) : undefined;
 
@@ -32,7 +35,7 @@ export function Calendar({
     if (convertTo === 'local') {
       date = date.toLocal();
     } else if (convertTo === 'sky') {
-      date = date.setZone('America/Los_Angeles');
+      date = date.setZone(getServerZone(server));
     }
 
     if (date.locale !== LuxonSettings.defaultLocale) {
@@ -94,7 +97,7 @@ export function Calendar({
         </>
       );
     }
-  }, [date.day, date.month, date.year, LuxonSettings.defaultLocale]);
+  }, [date.day, date.month, date.year, server, LuxonSettings.defaultLocale]);
 }
 
 export default Calendar;

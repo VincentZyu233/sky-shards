@@ -28,8 +28,7 @@ export const ShardInfoSection = forwardRef<HTMLDivElement, ShardInfoSectionProps
     const overrideAuthor = remoteAuthorNames?.[overrideBy];
     const reason: string = overrideReason.startsWith('!!!')
       ? 'Reason: ' + overrideReason.slice(3)
-      : // @ts-ignore
-        t(`override:reason.${overrideReason}`);
+      : t(`override:reason.${overrideReason}` as 'override:reason.event_area');
     return (
       <small className='text-[0.8em]'>
         <p className='flex flex-row flex-wrap items-center justify-center gap-1'>
@@ -72,6 +71,9 @@ export const ShardInfoSection = forwardRef<HTMLDivElement, ShardInfoSectionProps
   }
   return (
     <section className='glass max-w-full'>
+      {info.server === 'netease_cn' && (
+        <small className='block text-[0.75em] font-semibold opacity-75'>🇨🇳 国服排期 / NetEase CN schedule</small>
+      )}
       <p className='whitespace-normal'>
         {overrideDisclosure}
         <Trans
@@ -123,7 +125,9 @@ export const ShardInfoSection = forwardRef<HTMLDivElement, ShardInfoSectionProps
                 components={{ emoji: <Emoji name='Ascended candle' /> }}
               />
             </span>
-            {memory || memory === 0 ? (
+            {info.server === 'netease_cn' ? (
+              <span className='font-semibold'>远古回忆待确认 / Memory unconfirmed</span>
+            ) : memory || memory === 0 ? (
               <span
                 className='tooltip tooltip-top underline decoration-dashed md:tooltip-right'
                 data-tip={t('manualMemoryCredit', { author: remoteAuthorNames?.[memoryBy!] })}

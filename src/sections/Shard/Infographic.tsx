@@ -65,7 +65,8 @@ export function ShardMemoryInfographic({ remoteDailyConfig, authorNames }: Shard
   const { t } = useTranslation(['infographicSection', 'shard']);
   const memory = remoteDailyConfig?.memory;
   if (!memory && memory !== 0) return null;
-  const author = authorNames?.[remoteDailyConfig?.memoryBy!]!;
+  const memoryBy = remoteDailyConfig?.memoryBy;
+  const author = memoryBy ? authorNames?.[memoryBy] : undefined;
   const imageUrl = withBasePath(`/infographics/memory_clement/${memory}.webp`);
   const memoryStr = t(`shard:memories.${memory}`);
   return (
@@ -112,6 +113,7 @@ export function ShardMapInfographic({ info, remoteDailyConfig, authorNames }: Sh
       imageAlt={info.map}
       credits={
         <>
+          {info.server === 'netease_cn' && <p className='font-semibold'>精确落点待确认 / Exact location unconfirmed</p>}
           <a href='https://discord.gg/skyinfographicsdatabase' target='_blank' rel='noreferrer'>
             <div className='glass tooltip tooltip-top' data-tip='Click to join server'>
               <p>
