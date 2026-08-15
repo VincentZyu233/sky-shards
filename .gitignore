@@ -1,21 +1,21 @@
-# Build Artifacts
+# 📦 Build Artifacts
 dist
 dist-ssr
 
-# Temporary Folders
+# 🧹 Temporary Folders
 temp
 tmp
 
-# Environment Variables
+# 🔐 Environment Variables
 .env*
 !.env.example
 
-# Local
+# 💻 Local
 *.local
 
-# Node Modules
+# 🧩 Node Modules
 # Some libraries creates the folder like vite
 node_modules
 
-# Translation from Google Sheet
+# 🌐 Translation from Google Sheet
 src/i18n/locales.json

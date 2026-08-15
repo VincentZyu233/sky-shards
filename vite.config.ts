@@ -13,7 +13,6 @@ function normalizeBase(base: string) {
 const base = normalizeBase(process.env.DEPLOY_BASE ?? '/');
 
 process.env.VITE_VERSION = packageJson.version;
-process.env.VITE_VERSION_MINOR = packageJson.version.split('.').slice(0, 2).join('.');
 const gitBranch = process.env.CF_PAGES_BRANCH ?? process.env.GITHUB_REF_NAME;
 const gitCommit = process.env.CF_PAGES_COMMIT_SHA ?? process.env.GITHUB_SHA;
 if (gitBranch) process.env.VITE_GIT_BRANCH = gitBranch;
@@ -43,6 +42,11 @@ try {
 // https://vitejs.dev/config/
 export default defineConfig({
   base,
+  server: {
+    watch: {
+      ignored: ['**/temp/**', '**/tmp/**'],
+    },
+  },
   build: {
     rollupOptions: {
       output: {

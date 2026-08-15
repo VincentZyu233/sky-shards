@@ -1,8 +1,9 @@
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { HTMLAttributes, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BiLinkExternal } from 'react-icons/bi';
-import { BsGithub, BsTable } from 'react-icons/bs';
+import { BsChevronLeft, BsChevronRight, BsGithub, BsTable } from 'react-icons/bs';
 import { TbForms } from 'react-icons/tb';
+import { animate, motion, useMotionValue } from 'framer-motion';
 import { Settings as LuxonSettings } from 'luxon';
 import { patternCredits } from '../../data/credits';
 import useFeedbackFormUrl from '../../hooks/useFeedbackFom';
@@ -23,19 +24,42 @@ function SubFooter({ className, children }: SubFooterProps) {
 
 function AppDetailFooter() {
   const { t } = useTranslation('footer');
-  const version = import.meta.env.VITE_VERSION_MINOR ?? 'undefiend';
+  const version = import.meta.env.VITE_VERSION ?? 'undefined';
 
   const feedbackUrl = useFeedbackFormUrl();
   return (
     <SubFooter className='flex flex-col gap-2'>
       <div className='flex w-full flex-1 flex-row flex-wrap items-center justify-center gap-x-1 lg:gap-x-3'>
         <div>
-          <p className='text-center text-sm'>{t('createdBy', { author: 'Plutoy' })}</p>
+          <p className='flex flex-wrap items-center justify-center gap-x-2 text-center text-sm'>
+            <span className='whitespace-nowrap'>
+              Created by:{' '}
+              <a
+                href='https://github.com/PlutoyDev'
+                target='_blank'
+                rel='noreferrer'
+                className='decoration-current/40 font-semibold underline underline-offset-2 hover:decoration-current'
+              >
+                Plutoy
+              </a>
+            </span>
+            <span className='whitespace-nowrap'>
+              Forked by:{' '}
+              <a
+                href='https://github.com/VincentZyu233'
+                target='_blank'
+                rel='noreferrer'
+                className='decoration-current/40 font-semibold underline underline-offset-2 hover:decoration-current'
+              >
+                VincentZyu233
+              </a>
+            </span>
+          </p>
           <p className='text-center'>{t('version', { version })}</p>
         </div>
         <div className='mt-1 flex flex-row flex-wrap items-center justify-center gap-1'></div>
         <a
-          href='https://github.com/PlutoyDev/sky-shards'
+          href='https://github.com/VincentZyu233/sky-shards'
           target='_blank'
           rel='noreferrer'
           className='block rounded-xl bg-black px-2 pb-1 pt-0.5 text-white'
@@ -208,13 +232,19 @@ function SkyEventCalFooter() {
   );
 }
 
-const durationPerSection = 12; // seconds
+const durationPerSection = 5; // seconds
+const inertProps = { inert: '' } as HTMLAttributes<HTMLDivElement>;
 
 export function Footer() {
   const [currentSection, setCurrentSection] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [viewportWidth, setViewportWidth] = useState(0);
   const { i18n, t } = useTranslation('footer');
-  const footerRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<number | null>(null);
+  const isAnimatingRef = useRef(false);
+  const x = useMotionValue(0);
 
   const subfooters = useMemo(() => {
     const subfooters = [
@@ -239,18 +269,54 @@ export function Footer() {
   const numSubfooters = subfooters.length;
 
   useEffect(() => {
-    if (footerRef.current) {
-      footerRef.current.scrollTo({ top: currentSection * footerRef.current.clientHeight, behavior: 'smooth' });
-    }
-  }, [currentSection]);
+    setCurrentSection(current => Math.min(current, numSubfooters - 1));
+  }, [numSubfooters]);
 
   useEffect(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const updateWidth = () => {
+      setViewportWidth(viewport.clientWidth);
+      x.set(0);
+    };
+
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(viewport);
+
+    return () => observer.disconnect();
+  }, [x]);
+
+  const slideBy = useCallback(
+    async (offset: -1 | 1) => {
+      if (!viewportWidth || isAnimatingRef.current) return;
+
+      isAnimatingRef.current = true;
+      setIsAnimating(true);
+      setIsDragging(false);
+
+      await animate(x, offset > 0 ? -viewportWidth : viewportWidth, {
+        type: 'spring',
+        stiffness: 320,
+        damping: 32,
+      });
+
+      x.set(0);
+      setCurrentSection(current => (current + offset + numSubfooters) % numSubfooters);
+      isAnimatingRef.current = false;
+      setIsAnimating(false);
+    },
+    [numSubfooters, viewportWidth, x],
+  );
+
+  useEffect(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    if (isDragging || isAnimating) return;
 
     timeoutRef.current = window.setTimeout(() => {
-      setCurrentSection((currentSection + 1) % numSubfooters);
+      void slideBy(1);
     }, durationPerSection * 1000);
 
     return () => {
@@ -258,14 +324,69 @@ export function Footer() {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [currentSection, numSubfooters]);
+  }, [currentSection, isAnimating, isDragging, slideBy]);
+
+  const showPreviousSection = () => {
+    void slideBy(-1);
+  };
+
+  const showNextSection = () => {
+    void slideBy(1);
+  };
+
+  const PreviousFooter = subfooters[(currentSection - 1 + numSubfooters) % numSubfooters].Footer;
+  const ActiveFooter = subfooters[currentSection]?.Footer ?? subfooters[0].Footer;
+  const NextFooter = subfooters[(currentSection + 1) % numSubfooters].Footer;
 
   return (
-    <footer className='carousel carousel-vertical glass h-32 w-full cursor-row-resize !py-0 sm:h-28' ref={footerRef}>
-      {subfooters.map(({ key, Footer }) => (
-        <Footer key={key} />
-      ))}
-    </footer>
+    <div className='glass relative h-32 w-full overflow-hidden sm:h-28' ref={viewportRef}>
+      <motion.footer
+        className={`absolute inset-0 touch-pan-y select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        style={{ x }}
+        drag={isAnimating ? false : 'x'}
+        dragConstraints={{ left: -viewportWidth, right: viewportWidth }}
+        dragElastic={0}
+        dragMomentum={false}
+        onDragStart={() => setIsDragging(true)}
+        onDragEnd={(_, { offset, velocity }) => {
+          setIsDragging(false);
+          const swipePower = Math.abs(offset.x * velocity.x);
+          if (Math.abs(offset.x) < 50 && swipePower < 4000) {
+            void animate(x, 0, { type: 'spring', stiffness: 320, damping: 32 });
+            return;
+          }
+          void slideBy(offset.x > 0 ? -1 : 1);
+        }}
+      >
+        <div {...inertProps} aria-hidden='true' className='pointer-events-none absolute inset-0 -translate-x-full'>
+          <PreviousFooter />
+        </div>
+        <div className='absolute inset-0'>
+          <ActiveFooter />
+        </div>
+        <div {...inertProps} aria-hidden='true' className='pointer-events-none absolute inset-0 translate-x-full'>
+          <NextFooter />
+        </div>
+      </motion.footer>
+      <button
+        type='button'
+        aria-label='Show previous footer section'
+        title='Previous footer section'
+        className='btn btn-circle btn-sm absolute left-2 top-1/2 z-10 h-8 min-h-8 w-8 -translate-y-1/2 border border-white/20 bg-black/30 text-white shadow-md backdrop-blur-sm hover:bg-black/50'
+        onClick={showPreviousSection}
+      >
+        <BsChevronLeft aria-hidden='true' />
+      </button>
+      <button
+        type='button'
+        aria-label='Show next footer section'
+        title='Next footer section'
+        className='btn btn-circle btn-sm absolute right-2 top-1/2 z-10 h-8 min-h-8 w-8 -translate-y-1/2 border border-white/20 bg-black/30 text-white shadow-md backdrop-blur-sm hover:bg-black/50'
+        onClick={showNextSection}
+      >
+        <BsChevronRight aria-hidden='true' />
+      </button>
+    </div>
   );
 }
 

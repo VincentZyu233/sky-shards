@@ -142,25 +142,25 @@ export default function ShardCarousel() {
       </AnimatePresence>
       <a
         href={withBasePath(`/${lang}/${ytd.toFormat('yyyy/MM/dd')}`)}
-        className='relative col-start-1 row-start-1 flex cursor-pointer flex-col-reverse items-center justify-center text-xs [writing-mode:vertical-rl] [@media_(min-height:_640px)]:xl:text-lg'
+        className='relative col-start-1 row-start-1 flex cursor-pointer flex-col-reverse items-center justify-center gap-2 text-xs [@media_(min-height:_640px)]:xl:text-lg'
         onClick={e => {
           e.preventDefault();
           setSettings({ date: ytd });
         }}
       >
-        <span>{t('navigation.rightwards')}</span>
-        <BsChevronRight className='m-0' strokeWidth={'0.1rem'} />
+        <span className='leading-none [writing-mode:vertical-rl]'>{t('navigation.rightwards')}</span>
+        <BsChevronRight className='m-0 shrink-0' strokeWidth={'0.1rem'} />
       </a>
       <a
         href={withBasePath(`/${lang}/${tmr.toFormat('yyyy/MM/dd')}`)}
-        className='relative col-start-3 row-start-1 flex cursor-pointer flex-col items-center justify-center text-xs [writing-mode:vertical-rl] [@media_(min-height:_640px)]:xl:text-lg'
+        className='relative col-start-3 row-start-1 flex cursor-pointer flex-col items-center justify-center gap-2 text-xs [@media_(min-height:_640px)]:xl:text-lg'
         onClick={e => {
           e.preventDefault();
           setSettings({ date: tmr });
         }}
       >
-        <span>{t('navigation.leftwards')}</span>
-        <BsChevronLeft className='m-0' strokeWidth={'0.1rem'} />
+        <span className='leading-none [writing-mode:vertical-rl]'>{t('navigation.leftwards')}</span>
+        <BsChevronLeft className='m-0 shrink-0' strokeWidth={'0.1rem'} />
       </a>
     </div>
   );
