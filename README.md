@@ -1,11 +1,11 @@
-> **[📖 English README](README.md)**
-> **[📖 简体中文 README](README.zh-cn.md)**
+> **[【📖 English README】](README.md)**
+> **[【📖 简体中文 阅读我文档】](README.zh-cn.md)**
 
-> **[📖 English Shard Prediction Rule](ShardPredictionRule.md)**
-> **[📖 简体中文碎片预测规则](ShardPredictionRule.zh-cn.md)**
+> **[【📖 English Shard Prediction Rule】](ShardPredictionRule.md)**
+> **[【📖 简体中文 碎片预测规则】](ShardPredictionRule.zh-cn.md)**
 
-> **[📖 English Dual Pages Deployment](.github/workflows/deploy-pages.md)**
-> **[📖 简体中文双 Pages 部署](.github/workflows/deploy-pages.zh-cn.md)**
+> **[【📖 English Dual Pages Deployment】](.github/workflows/deploy-pages.md)**
+> **[【📖 简体中文 双网页部署】](.github/workflows/deploy-pages.zh-cn.md)**
 
 # 🌠 Sky Shard Web Application
 
@@ -113,4 +113,4 @@ TL;DR: You can do whatever you want with the code. A link back to this repositor
 >
 > Assets located in `/public/infographics/*`, `/public/ext/*` & `/public/emojis/*` are not covered by this license as they are not created by me.
 
-[MIT](./LICENSE)
+[【📖 MIT LICENSE】](./LICENSE)

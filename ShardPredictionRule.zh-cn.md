@@ -1,11 +1,11 @@
-> **[📖 English README](README.md)**
-> **[📖 简体中文 README](README.zh-cn.md)**
+> **[【📖 English README】](README.md)**
+> **[【📖 简体中文 阅读我文档】](README.zh-cn.md)**
 
-> **[📖 English Shard Prediction Rule](ShardPredictionRule.md)**
-> **[📖 简体中文碎片预测规则](ShardPredictionRule.zh-cn.md)**
+> **[【📖 English Shard Prediction Rule】](ShardPredictionRule.md)**
+> **[【📖 简体中文 碎片预测规则】](ShardPredictionRule.zh-cn.md)**
 
-> **[📖 English Dual Pages Deployment](.github/workflows/deploy-pages.md)**
-> **[📖 简体中文双 Pages 部署](.github/workflows/deploy-pages.zh-cn.md)**
+> **[【📖 English Dual Pages Deployment】](.github/workflows/deploy-pages.md)**
+> **[【📖 简体中文 双网页部署】](.github/workflows/deploy-pages.zh-cn.md)**
 
 # 🔮 碎片预测规则
 

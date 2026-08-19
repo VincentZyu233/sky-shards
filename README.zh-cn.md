@@ -1,11 +1,11 @@
-> **[📖 English README](README.md)**
-> **[📖 简体中文 README](README.zh-cn.md)**
+> **[【📖 English README】](README.md)**
+> **[【📖 简体中文 阅读我文档】](README.zh-cn.md)**
 
-> **[📖 English Shard Prediction Rule](ShardPredictionRule.md)**
-> **[📖 简体中文碎片预测规则](ShardPredictionRule.zh-cn.md)**
+> **[【📖 English Shard Prediction Rule】](ShardPredictionRule.md)**
+> **[【📖 简体中文 碎片预测规则】](ShardPredictionRule.zh-cn.md)**
 
-> **[📖 English Dual Pages Deployment](.github/workflows/deploy-pages.md)**
-> **[📖 简体中文双 Pages 部署](.github/workflows/deploy-pages.zh-cn.md)**
+> **[【📖 English Dual Pages Deployment】](.github/workflows/deploy-pages.md)**
+> **[【📖 简体中文 双网页部署】](.github/workflows/deploy-pages.zh-cn.md)**
 
 # 🌠 Sky 碎片 Web 应用
 
@@ -113,4 +113,4 @@ GitHub Pages 和 Cloudflare Pages 部署设置记录在 [deploy-pages.zh-cn.md](
 >
 > `/public/infographics/*`、`/public/ext/*` 和 `/public/emojis/*` 中的资源并非由我创建，因此不受此许可证约束。
 
-[MIT](./LICENSE)
+[【📖 MIT LICENSE】](./LICENSE)
