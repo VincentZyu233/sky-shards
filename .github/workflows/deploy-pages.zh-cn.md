@@ -1,3 +1,10 @@
+> **[📖 English README](../../README.md)**
+> **[📖 简体中文 README](../../README.zh-cn.md)**
+> **[📖 English Shard Prediction Rule](../../ShardPredictionRule.md)**
+> **[📖 简体中文碎片预测规则](../../ShardPredictionRule.zh-cn.md)**
+> **[📖 English Dual Pages Deployment](deploy-pages.md)**
+> **[📖 简体中文双 Pages 部署](deploy-pages.zh-cn.md)**
+
 # 🚀 双 Pages 部署
 
 本仓库会将 `production` 分支部署到以下两个平台：

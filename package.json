@@ -1,7 +1,7 @@
 {
   "name": "sky-shards",
   "private": true,
-  "version": "8.4.0-beta.1+20260816",
+  "version": "8.4.0-beta.2+20260820",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -1,3 +1,10 @@
+> **[📖 English README](README.md)**
+> **[📖 简体中文 README](README.zh-cn.md)**
+> **[📖 English Shard Prediction Rule](ShardPredictionRule.md)**
+> **[📖 简体中文碎片预测规则](ShardPredictionRule.zh-cn.md)**
+> **[📖 English Dual Pages Deployment](.github/workflows/deploy-pages.md)**
+> **[📖 简体中文双 Pages 部署](.github/workflows/deploy-pages.zh-cn.md)**
+
 # 🌠 Sky 碎片 Web 应用
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Visit-6C757D?logo=github&logoColor=white&labelColor=181717)](https://vincentzyu233.github.io/sky-shards/) [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare%20Pages-Visit-6C757D?logo=cloudflare&logoColor=white&labelColor=F38020)](https://sky-shards-vincentzyu233-fork.pages.dev/)
