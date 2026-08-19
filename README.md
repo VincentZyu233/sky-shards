@@ -15,11 +15,21 @@
 
 Compute the color, time and location of [Shard Eruptions](https://sky-children-of-the-light.fandom.com/wiki/Shard_Eruptions) in the Game "Sky: Children of the Light".
 
-Shard is computed as described in [Shard Prediction Rule](./ShardPredictionRule.md) and calculated [here](./src/data/shard.ts)
+Shard information follows the [Shard Prediction Rule](./ShardPredictionRule.md), and the implementation is available [here](./src/data/shard.ts).
 
-## 🌍 Server Capabilities
+## 🖼️ Preview
 
-Use the server switch beside the logo to choose `🌍 TGC Global 国际服` or `🇨🇳 NetEase CN 网易国服`. The selected calendar date is preserved when switching, while schedules and countdowns change to the selected server's rules and event timezone.
+<p align="center">
+  <img src="./docs/images/preview/preview.pc.png" alt="Sky Shards desktop preview" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/preview/preview.phone.png" alt="Sky Shards mobile preview" width="32%" />
+</p>
+
+## 🌍 Server Capability Differences
+
+Use the server switch beside the logo to choose `🌍 TGC Global 那游公司国际服` or `🇨🇳 NetEase CN 网易国服`. The selected calendar date is preserved when switching, while schedules and countdowns change to the selected server's rules and event timezone.
 
 | Capability                                               | Global | CN  | Notes                                                                                                                                |
 | -------------------------------------------------------- | :----: | :-: | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -57,11 +67,11 @@ Processed by [Setting Context](./src/context/Settings.tsx)
 ### ⚙️ Query Parameters
 
 - `server` - Game server (`tgc_global` | `netease_cn`); missing or invalid values are normalized to `tgc_global`
-- `gsTrans` - Fetch Google Sheet Translation (`1`|`0`)
-- `twelveHour` - Display time in 12-hour format (`true` | `false` | `system` )
+- `gsTrans` - Fetch Google Sheets translations (`1` | `0`)
+- `twelveHour` - Display time in 12-hour format (`true` | `false` | `system`)
 - `lightMode` - Light mode (`true` | `false` | `system`)
 - `timezone` - Timezone [IANA Timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) (`string`)
-- `fontSize` - Font size (1 decimal point) (`number`)
+- `fontSize` - Content font-size multiplier (`number`); missing or invalid values are normalized to `1`
 - `numCols` - Number of columns in the table in date selector (`number`)
 
 ## 🛠️ Development

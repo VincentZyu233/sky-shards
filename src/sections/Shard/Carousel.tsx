@@ -101,7 +101,7 @@ export default function ShardCarousel() {
               setSettings({ date: date.plus({ days: Math.sign(swipe) }) });
             }
           }}
-          style={{ fontSize: `${fontSize}em` }}
+          style={{ fontSize: `${(Number.parseFloat(fontSize) * 1.16).toFixed(3)}em` }}
         >
           <div className='grid min-h-full w-full content-center items-stretch gap-3 py-3 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)] lg:grid-rows-[auto_auto_auto]'>
             <ShardInfoSection
@@ -109,7 +109,9 @@ export default function ShardCarousel() {
               remoteDailyConfig={remoteDailyConfig}
               remoteAuthorNames={remoteConfig?.authorNames}
               toggleOverride={() => setApplyOverride(!applyOverride)}
-              className='w-full px-4 py-3 shadow-md shadow-black/15 lg:col-start-1 lg:row-start-1'
+              className={`w-full px-4 py-3 shadow-md shadow-black/15 lg:col-start-1 lg:row-start-1 ${
+                info.hasShard ? '' : 'lg:col-span-2 lg:max-w-[50rem] lg:justify-self-center'
+              }`}
             />
 
             {info.hasShard && (
@@ -153,7 +155,7 @@ export default function ShardCarousel() {
         </motion.main>
       </AnimatePresence>
       <a
-        href={`${withBasePath(`/${lang}/${ytd.toFormat('yyyy/MM/dd')}`)}?server=${server}`}
+        href={`${withBasePath(`/${lang}/${ytd.toFormat('yyyy/MM/dd')}`)}?fontSize=${encodeURIComponent(fontSize)}&server=${server}`}
         className='group relative col-start-1 row-start-1 flex h-full cursor-pointer flex-col-reverse items-center justify-center gap-2 text-xs'
         onClick={e => {
           e.preventDefault();
@@ -169,7 +171,7 @@ export default function ShardCarousel() {
         />
       </a>
       <a
-        href={`${withBasePath(`/${lang}/${tmr.toFormat('yyyy/MM/dd')}`)}?server=${server}`}
+        href={`${withBasePath(`/${lang}/${tmr.toFormat('yyyy/MM/dd')}`)}?fontSize=${encodeURIComponent(fontSize)}&server=${server}`}
         className='group relative col-start-3 row-start-1 flex h-full cursor-pointer flex-col items-center justify-center gap-2 text-xs'
         onClick={e => {
           e.preventDefault();

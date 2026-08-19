@@ -15,11 +15,21 @@
 
 计算游戏《光·遇》中[碎片喷发](https://sky-children-of-the-light.fandom.com/wiki/Shard_Eruptions)的颜色、时间和位置。
 
-碎片信息按照[碎片预测规则](./ShardPredictionRule.md)计算，具体计算逻辑位于[此处](./src/data/shard.ts)
+碎片信息按照[碎片预测规则](./ShardPredictionRule.md)计算，具体计算逻辑位于[此处](./src/data/shard.ts)。
+
+## 🖼️ 页面预览
+
+<p align="center">
+  <img src="./docs/images/preview/preview.pc.png" alt="Sky 碎片桌面端页面预览" width="100%" />
+</p>
+
+<p align="center">
+  <img src="./docs/images/preview/preview.phone.png" alt="Sky 碎片移动端页面预览" width="32%" />
+</p>
 
 ## 🌍 服务器能力差异
 
-使用 Logo 旁的服务器切换控件选择 `🌍 TGC Global 国际服` 或 `🇨🇳 NetEase CN 网易国服`。切换时会保留当前日历日期，同时按照所选服务器的规则和事件时区更新排期与倒计时。
+使用 Logo 旁的服务器切换控件选择 `🌍 TGC Global 那游公司国际服` 或 `🇨🇳 NetEase CN 网易国服`。切换时会保留当前日历日期，同时按照所选服务器的规则和事件时区更新排期与倒计时。
 
 | 能力                                   | 国际服 | 国服 | 说明                                                                                                                |
 | -------------------------------------- | :----: | :--: | ------------------------------------------------------------------------------------------------------------------- |
@@ -61,7 +71,7 @@ Google 表格链接：[Sky Shard Translation](https://docs.google.com/spreadshee
 - `twelveHour` - 以 12 小时制显示时间（`true` | `false` | `system`）
 - `lightMode` - 浅色模式（`true` | `false` | `system`）
 - `timezone` - 时区 [IANA 时区](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)（`string`）
-- `fontSize` - 字体大小（保留 1 位小数）（`number`）
+- `fontSize` - 内容字号倍率（`number`）；缺失或无效值会被规范化为 `1`
 - `numCols` - 日期选择器表格的列数（`number`）
 
 ## 🛠️ 开发

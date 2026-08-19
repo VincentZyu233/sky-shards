@@ -15,21 +15,21 @@ Disclaimer: This is not an official rule. It is a community effort to predict th
 
 ---
 
-### ⏰ Shard Eruption Time
+## ⏰ Shard Eruption Time
 
-1st shard event start
+First shard event start times
 
 - Black Shard: 1:50, 2:10
 - Red Shard: 2:20, 3:30, 7:40
 
 > Note: Start time is when the shard will appear on the gate. Landing time is 8 minutes and 40 seconds after the start time.
 
-Shard for 4 hours, 3 times a day every
+Each shard event lasts 4 hours and occurs 3 times per day at the following intervals:
 
 - Black Shard: 8 hours
 - Red Shard: 6 hours
 
-### 📍 Shard Eruption Location
+## 📍 Shard Eruption Location
 
 - Black Shard:
   - Prairie: Village Islands, Butterfly Field
@@ -46,7 +46,7 @@ Shard for 4 hours, 3 times a day every
 
 ---
 
-# 🧮 Original method
+# 🧮 Original Method
 
 ## ⏱️ Step 1: First landing time of Shard
 
@@ -76,7 +76,7 @@ Shard for 4 hours, 3 times a day every
 | Wasteland | Broken Temple    | Battlefield      | Graveyard         | Crabfield         | Forgotten Ark     |
 | Vault     | Starlight Desert | Starlight Desert | Jellyfish Cove    | Jellyfish Cove    | Jellyfish Cove    |
 
-## 💤 Step 3: No Shad Day??
+## 💤 Step 3: No Shard Day??
 
 Shard will not land on the following day of the week:
 

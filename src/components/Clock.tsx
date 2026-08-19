@@ -107,7 +107,7 @@ export function Countdown({ to }: CountdownProp) {
   const days = hours > 60 ? Math.floor(hours / 24) : undefined;
 
   return (
-    <div className='my-0.5 grid auto-cols-fr grid-flow-col grid-rows-[auto,auto] justify-center justify-items-center gap-x-2 px-2'>
+    <div className='my-0.5 flex items-start justify-center gap-x-1 px-0'>
       {days && (
         <CountdownParts
           value={days}
@@ -115,21 +115,35 @@ export function Countdown({ to }: CountdownProp) {
           unitLong={t('days.long', { count: days })}
         />
       )}
-      <CountdownParts
-        value={days ? hours % 24 : hours}
-        unitShort={t('hours.short', { count: hours })}
-        unitLong={t('hours.long', { count: hours })}
-      />
-      <CountdownParts
-        value={minutes}
-        unitShort={t('minutes.short', { count: minutes })}
-        unitLong={t('minutes.long', { count: minutes })}
-      />
-      <CountdownParts
-        value={seconds}
-        unitShort={t('seconds.short', { count: seconds })}
-        unitLong={t('seconds.long', { count: seconds })}
-      />
+      <div className='flex items-start gap-x-0.5'>
+        <CountdownParts
+          value={days ? hours % 24 : hours}
+          unitShort={t('hours.short', { count: hours })}
+          unitLong={t('hours.long', { count: hours })}
+        />
+        <span
+          aria-hidden='true'
+          className='font-mono text-[1.2em] font-bold leading-[.8em] opacity-70 md:text-[1.8em] md:leading-[1em]'
+        >
+          :
+        </span>
+        <CountdownParts
+          value={minutes}
+          unitShort={t('minutes.short', { count: minutes })}
+          unitLong={t('minutes.long', { count: minutes })}
+        />
+        <span
+          aria-hidden='true'
+          className='font-mono text-[1.2em] font-bold leading-[.8em] opacity-70 md:text-[1.8em] md:leading-[1em]'
+        >
+          :
+        </span>
+        <CountdownParts
+          value={seconds}
+          unitShort={t('seconds.short', { count: seconds })}
+          unitLong={t('seconds.long', { count: seconds })}
+        />
+      </div>
     </div>
   );
 }
@@ -145,12 +159,12 @@ export function CountdownParts({
 }) {
   const valueStr = value.toString().padStart(2, '0');
   return (
-    <>
-      <span className='font-mono text-[1.2em] font-bold leading-[.8em] md:text-[1.8em] md:leading-[1em]'>
+    <span className='grid min-w-[2ch] grid-rows-[auto_auto] justify-items-center'>
+      <span className='font-mono text-[1.2em] font-bold tabular-nums leading-[.8em] md:text-[1.8em] md:leading-[1em]'>
         {valueStr}
       </span>
       <span className='text-[0.8em] opacity-60 md:hidden'>{unitShort}</span>
-      <span className=' text-[1em] opacity-60 max-md:hidden'>{unitLong}</span>
-    </>
+      <span className='text-[1em] opacity-60 max-md:hidden'>{unitLong}</span>
+    </span>
   );
 }

@@ -7,7 +7,7 @@ Query: gsTrans=1, lang=xx.
 
 new URL Format:
 Path: /, /{yyyy}/{MM}/{dd}, /{lang}/{yyyy}/{MM}/{dd},
-Query: server=(tgc_global|netease_cn), gsTrans=1, twelveHour=(true|false|system), lightMode=(true|false|system), timezone.
+Query: server=(tgc_global|netease_cn), fontSize, gsTrans=1, twelveHour=(true|false|system), lightMode=(true|false|system), timezone.
 */
 import { useState, useCallback, createContext, useContext, useMemo } from 'react';
 import i18next from 'i18next';
@@ -91,6 +91,13 @@ interface SettingsNew extends SettingsOld {
   legTimeline?: boolean;
 }
 
+export const DEFAULT_FONT_SIZE = '1';
+
+export function normalizeFontSize(value: unknown): string {
+  const parsed = typeof value === 'number' ? value : typeof value === 'string' ? Number(value) : Number.NaN;
+  return Number.isFinite(parsed) && parsed > 0 ? String(parsed) : DEFAULT_FONT_SIZE;
+}
+
 function validifySettings(settings: Partial<SettingsNew>) {
   // check if lang is in languageCode
   if ('lang' in settings && settings.lang && !(settings.lang in languageCode)) {
@@ -98,6 +105,9 @@ function validifySettings(settings: Partial<SettingsNew>) {
   }
   if ('server' in settings && !isGameServer(settings.server)) {
     delete settings.server;
+  }
+  if ('fontSize' in settings) {
+    settings.fontSize = normalizeFontSize(settings.fontSize);
   }
 
   return settings;
@@ -159,8 +169,7 @@ function parseNewUrl(url: URL): SettingsNew {
   if (lightMode) ret.lightMode = lightMode;
   const timezone = searchParams.get('timezone');
   if (timezone) ret.timezone = timezone;
-  const fontSize = searchParams.get('fontSize');
-  if (fontSize) ret.fontSize = fontSize;
+  ret.fontSize = normalizeFontSize(searchParams.get('fontSize'));
   const numCols = searchParams.get('numCols') as '5' | '7';
   if (numCols) ret.numCols = numCols;
 
@@ -275,7 +284,7 @@ function getDefault(server: GameServer = 'tgc_global'): Required<SettingsNew> {
     lightMode: 'system',
     twelveHourMode: 'system',
     timezone: 'system',
-    fontSize: window.innerWidth > 768 && window.innerHeight > 500 ? '1.2' : '0.8',
+    fontSize: DEFAULT_FONT_SIZE,
     numCols: '5',
     lastWarn: 0,
     legTimeline: true,
@@ -393,7 +402,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
           );
           settings = { ...old, ...parsed };
         } else {
-          settings = { ...old, ...edits };
+          const normalizedEdits = validifySettings({ ...edits });
+          settings = { ...old, ...normalizedEdits };
         }
 
         if (edits?.server && edits.server !== old.server && !edits.date) {
@@ -433,6 +443,11 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
           if (key === 'server') {
             urlParams.set(key, val as string);
             localParams.set(key, String(val));
+            return;
+          }
+          if (key === 'fontSize') {
+            urlParams.set(key, normalizeFontSize(val));
+            if (val !== def.fontSize) localParams.set(key, normalizeFontSize(val));
             return;
           }
           if (key === 'lang' && val !== def.lang) {

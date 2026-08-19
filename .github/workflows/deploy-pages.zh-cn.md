@@ -14,7 +14,7 @@
 - GitHub Pages：`https://vincentzyu233.github.io/sky-shards/`
 - Cloudflare Pages：`https://sky-shards-vincentzyu233-fork.pages.dev/`
 
-当最新提交信息包含小写关键词 `deploy-pages` 或 `deploypages` 时，工作流会运行。方括号可有可无，但大写形式不会触发部署。手动触发工作流始终会部署两个站点。
+每次推送到 `production` 都会运行关键词检查。只有最新提交信息包含小写关键词 `deploy-pages` 或 `deploypages` 时，两个部署任务才会运行。方括号可有可无，但大写形式不会触发部署。手动触发工作流始终会部署两个站点。
 
 ## 1. ✅ 前置条件
 
@@ -37,7 +37,7 @@ gh repo view VincentZyu233/sky-shards
 # 请在仓库根目录执行。
 $placeholder = 'tmp/upload'
 New-Item -ItemType Directory -Path $placeholder -Force | Out-Null
-Set-Content -LiteralPath (Join-Path $placeholder 'index.html') -Encoding utf8 -Value '<!doctype html><meta charset="utf-8"><title>sky-shards-vincentzyu-fork deployment pending...</title><h1>sky-shards-vincentzyu-fork deployment pending...</h1>'
+Set-Content -LiteralPath (Join-Path $placeholder 'index.html') -Encoding utf8 -Value '<!doctype html><meta charset="utf-8"><title>sky-shards-vincentzyu233-fork deployment pending...</title><h1>sky-shards-vincentzyu233-fork deployment pending...</h1>'
 ```
 
 Linux 和 macOS 等价命令：
@@ -46,7 +46,7 @@ Linux 和 macOS 等价命令：
 # 请在仓库根目录执行。
 placeholder='tmp/upload'
 mkdir -p "$placeholder"
-printf '%s\n' '<!doctype html><meta charset="utf-8"><title>sky-shards-vincentzyu-fork deployment pending...</title><h1>sky-shards-vincentzyu-fork deployment pending...</h1>' > "$placeholder/index.html"
+printf '%s\n' '<!doctype html><meta charset="utf-8"><title>sky-shards-vincentzyu233-fork deployment pending...</title><h1>sky-shards-vincentzyu233-fork deployment pending...</h1>' > "$placeholder/index.html"
 ```
 
 2. 打开 [Cloudflare Workers & Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages)，选择将拥有该项目的账户。
@@ -145,7 +145,7 @@ git push origin production
 
 其他可接受的示例包括 `deploy-pages`、`[deploypages]` 和 `deploypages`。类似 `[DEPLOY-PAGES]` 的大写形式会被有意忽略。
 
-推送到 `production` 时如果不包含任一关键词，工作流会记录为已跳过，并且不会构建或部署。
+推送到 `production` 时如果不包含任一关键词，则只运行关键词检查，两个部署任务都会跳过，因此不会构建或部署站点。
 
 ## 7. 🔍 手动运行和检查部署
 
@@ -168,5 +168,5 @@ gh run rerun RUN_ID --failed --repo VincentZyu233/sky-shards
 - `Authentication error`：为正确账户使用 `Account / Cloudflare Pages / Edit` 权限重新创建 Token，然后更新 `CLOUDFLARE_API_TOKEN`。
 - Cloudflare 主域名仍显示占位页：确认工作流中的 **Configure Cloudflare Pages production branch** 步骤成功，然后重新运行工作流。
 - GitHub Pages 在站点根路径返回 404：确认 Pages 使用 **GitHub Actions** 作为来源，然后重新运行 GitHub Pages job。
-- 工作流被跳过：确认最新推送的提交包含小写的 `deploy-pages` 或 `deploypages`，或者使用手动触发。
+- 部署任务被跳过：确认最新推送的提交包含小写的 `deploy-pages` 或 `deploypages`，或者使用手动触发。
 - 深层 GitHub Pages URL 在 JavaScript 加载前返回应用外壳：这是预期行为，因为 `404.html` 提供了 SPA 回退。

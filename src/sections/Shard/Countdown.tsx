@@ -16,11 +16,11 @@ export function ShardCountdownSection({ info, className = '' }: { info: ShardInf
 
   return (
     <section
-      className={`glass grid min-w-[12rem] auto-cols-auto auto-rows-auto place-items-center gap-x-4 short:min-w-[24rem] short:items-end tall:md:min-w-[16rem] ${className}`}
+      className={`glass grid min-w-[12rem] grid-cols-2 grid-rows-[auto_auto] place-items-center gap-x-3 gap-y-2 sm:gap-x-6 ${className}`}
     >
       {upcomming ? (
         <>
-          <div className='col-start-1 row-start-1 w-full short:col-span-1 short:col-start-2 short:row-start-1 tall:md:col-span-2 '>
+          <div className='col-span-2 col-start-1 row-start-1 w-full'>
             <Trans
               t={t}
               i18nKey={landed ? 'landed' : 'landing'}
@@ -36,7 +36,7 @@ export function ShardCountdownSection({ info, className = '' }: { info: ShardInf
             />
           </div>
           <time
-            className='col-start-1 row-start-2 short:row-start-1'
+            className='col-start-1 row-start-2 w-full min-w-0 pr-3 text-left sm:pr-6'
             dateTime={countdownTo?.setZone('local')?.toISO({ suppressMilliseconds: true }) ?? undefined}
           >
             <strong>{t('yourTime')}</strong>
@@ -45,7 +45,7 @@ export function ShardCountdownSection({ info, className = '' }: { info: ShardInf
             <StaticClock time={countdownTo} convertTo='local' className='block font-bold' />
           </time>
           <time
-            className='col-start-1 row-start-3 short:col-start-3 short:row-start-1 tall:md:col-start-2 tall:md:row-start-2'
+            className='col-start-2 row-start-2 w-full min-w-0 border-l border-white/25 pl-3 text-left sm:pl-6'
             dateTime={countdownTo?.toISO({ suppressMilliseconds: true }) ?? undefined}
           >
             <strong>{t('skyTime')}</strong>
@@ -55,7 +55,7 @@ export function ShardCountdownSection({ info, className = '' }: { info: ShardInf
           </time>
         </>
       ) : (
-        <div className='col-start-1 row-start-1 w-full'>
+        <div className='col-span-2 col-start-1 row-start-1 w-full'>
           <Trans
             t={t}
             tOptions={{ transWrapTextNodes: 'p' }}

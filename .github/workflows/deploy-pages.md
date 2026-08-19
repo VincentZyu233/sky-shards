@@ -14,7 +14,7 @@ This repository deploys the `production` branch to both platforms:
 - GitHub Pages: `https://vincentzyu233.github.io/sky-shards/`
 - Cloudflare Pages: `https://sky-shards-vincentzyu233-fork.pages.dev/`
 
-The workflow runs when the latest commit message contains the lowercase keyword `deploy-pages` or `deploypages`. Brackets are optional, but uppercase variants do not trigger deployment. A manual workflow dispatch always deploys both sites.
+Every push to `production` runs the keyword check. The two deployment jobs run only when the latest commit message contains the lowercase keyword `deploy-pages` or `deploypages`. Brackets are optional, but uppercase variants do not trigger deployment. A manual workflow dispatch always deploys both sites.
 
 ## 1. ✅ Prerequisites
 
@@ -37,7 +37,7 @@ Create a Direct Upload project named exactly `sky-shards-vincentzyu233-fork`. Do
 # Run from the repository root.
 $placeholder = 'tmp/upload'
 New-Item -ItemType Directory -Path $placeholder -Force | Out-Null
-Set-Content -LiteralPath (Join-Path $placeholder 'index.html') -Encoding utf8 -Value '<!doctype html><meta charset="utf-8"><title>sky-shards-vincentzyu-fork deployment pending...</title><h1>sky-shards-vincentzyu-fork deployment pending...</h1>'
+Set-Content -LiteralPath (Join-Path $placeholder 'index.html') -Encoding utf8 -Value '<!doctype html><meta charset="utf-8"><title>sky-shards-vincentzyu233-fork deployment pending...</title><h1>sky-shards-vincentzyu233-fork deployment pending...</h1>'
 ```
 
 Linux and macOS equivalent:
@@ -46,7 +46,7 @@ Linux and macOS equivalent:
 # Run from the repository root.
 placeholder='tmp/upload'
 mkdir -p "$placeholder"
-printf '%s\n' '<!doctype html><meta charset="utf-8"><title>sky-shards-vincentzyu-fork deployment pending...</title><h1>sky-shards-vincentzyu-fork deployment pending...</h1>' > "$placeholder/index.html"
+printf '%s\n' '<!doctype html><meta charset="utf-8"><title>sky-shards-vincentzyu233-fork deployment pending...</title><h1>sky-shards-vincentzyu233-fork deployment pending...</h1>' > "$placeholder/index.html"
 ```
 
 2. Open [Cloudflare Workers & Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages) and select the account that will own the project.
@@ -145,7 +145,7 @@ git push origin production
 
 Other accepted examples include `deploy-pages`, `[deploypages]`, and `deploypages`. Uppercase variants such as `[DEPLOY-PAGES]` are intentionally ignored.
 
-A `production` push without either keyword records a skipped workflow and does not build or deploy.
+A `production` push without either keyword runs only the keyword check; both deployment jobs are skipped, so the site is neither built nor deployed.
 
 ## 7. 🔍 Run and inspect deployments manually
 
@@ -168,5 +168,5 @@ gh run rerun RUN_ID --failed --repo VincentZyu233/sky-shards
 - `Authentication error`: recreate the token with `Account / Cloudflare Pages / Edit` for the correct account, then update `CLOUDFLARE_API_TOKEN`.
 - The main Cloudflare domain still shows the placeholder: confirm the workflow's **Configure Cloudflare Pages production branch** step succeeded, then rerun the workflow.
 - GitHub Pages returns 404 at the site root: confirm Pages uses **GitHub Actions** as its source and rerun the GitHub Pages job.
-- A workflow is skipped: confirm the latest pushed commit contains lowercase `deploy-pages` or `deploypages`, or use manual dispatch.
+- A deployment job is skipped: confirm the latest pushed commit contains lowercase `deploy-pages` or `deploypages`, or use manual dispatch.
 - A deep GitHub Pages URL returns the app shell before JavaScript loads: this is expected because `404.html` provides the SPA fallback.
