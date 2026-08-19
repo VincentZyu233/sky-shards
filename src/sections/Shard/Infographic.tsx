@@ -21,10 +21,10 @@ function ShardInfographics({ title, image, imageAlt, credits }: ShardInfographic
   }, [image]);
 
   return (
-    <div className='glass'>
-      <h1 className='mb-1 font-extrabold underline'>{title}</h1>
+    <div className='glass flex w-full min-w-0 max-w-lg flex-col'>
+      <h1 className='mb-1 break-words font-extrabold underline'>{title}</h1>
       {noImg ? (
-        <div role='alert' className='alert '>
+        <div role='alert' className='alert min-w-0 max-w-full'>
           {/* Copied from DaisyUI */}
           <svg
             xmlns='http://www.w3.org/2000/svg'
@@ -42,16 +42,16 @@ function ShardInfographics({ title, image, imageAlt, credits }: ShardInfographic
           <span>{t('imageError')}</span>
         </div>
       ) : (
-        <a href={image} className='block p-0.5' target='_blank' rel='noreferrer'>
+        <a href={image} className='block w-full min-w-0 p-0.5' target='_blank' rel='noreferrer'>
           <img
             src={image}
             alt={imageAlt}
             onError={() => setNoImg(true)}
-            className='mx-auto cursor-pointer rounded-md shadow-lg md:max-w-lg'
+            className='mx-auto block h-auto w-full max-w-full cursor-pointer rounded-md object-contain shadow-lg'
           />
         </a>
       )}
-      <small>{credits}</small>
+      <small className='block min-w-0 max-w-full break-words'>{credits}</small>
     </div>
   );
 }
@@ -76,9 +76,14 @@ export function ShardMemoryInfographic({ remoteDailyConfig, authorNames }: Shard
       imageAlt={memoryStr}
       credits={
         <>
-          <a href='https://discord.gg/skyinfographicsdatabase' target='_blank' rel='noreferrer'>
-            <div className='glass tooltip tooltip-top' data-tip='Click to join server'>
-              <p>
+          <a
+            href='https://discord.gg/skyinfographicsdatabase'
+            className='block max-w-full'
+            target='_blank'
+            rel='noreferrer'
+          >
+            <div className='glass tooltip tooltip-top max-w-full' data-tip='Click to join server'>
+              <p className='break-words'>
                 <strong>Sky: COTL </strong>Infographic Database Discord Server
                 <BsDiscord className='ml-1 inline' />
                 <BiLinkExternal className='ml-1 inline' />
@@ -114,9 +119,14 @@ export function ShardMapInfographic({ info, remoteDailyConfig, authorNames }: Sh
       credits={
         <>
           {info.server === 'netease_cn' && <p className='font-semibold'>精确落点待确认 / Exact location unconfirmed</p>}
-          <a href='https://discord.gg/skyinfographicsdatabase' target='_blank' rel='noreferrer'>
-            <div className='glass tooltip tooltip-top' data-tip='Click to join server'>
-              <p>
+          <a
+            href='https://discord.gg/skyinfographicsdatabase'
+            className='block max-w-full'
+            target='_blank'
+            rel='noreferrer'
+          >
+            <div className='glass tooltip tooltip-top max-w-full' data-tip='Click to join server'>
+              <p className='break-words'>
                 <strong>Sky: COTL </strong>Infographic Database Discord Server
                 <BsDiscord className='ml-1 inline' />
                 <BiLinkExternal className='ml-1 inline' />

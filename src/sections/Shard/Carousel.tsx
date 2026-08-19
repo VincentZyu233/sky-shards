@@ -39,6 +39,7 @@ export default function ShardCarousel() {
     () => (server === 'tgc_global' ? remoteConfig?.dailiesMap[date.toISODate() as string] : undefined),
     [remoteConfig, date, server],
   );
+  const hasMemoryInfographic = remoteDailyConfig?.memory != null;
 
   const { info, tmr, ytd } = useMemo(
     () => ({
@@ -142,7 +143,11 @@ export default function ShardCarousel() {
             )}
           </div>
           {info.hasShard && (
-            <div className='grid w-full grid-cols-1 items-start justify-items-center gap-4 rounded-lg border border-white/15 bg-black/10 p-3 md:grid-cols-2 xl:grid-cols-3'>
+            <div
+              className={`grid w-full grid-cols-1 items-start justify-items-center gap-4 rounded-lg border border-white/15 bg-black/10 p-3 ${
+                hasMemoryInfographic ? 'xl:grid-cols-3' : 'xl:grid-cols-2'
+              }`}
+            >
               <ShardMemoryInfographic remoteDailyConfig={remoteDailyConfig} authorNames={remoteConfig?.authorNames} />
               <ShardMapInfographic
                 info={info}
