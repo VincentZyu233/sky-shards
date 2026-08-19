@@ -12,9 +12,10 @@ import { ShardInfo } from '../../data/shard';
 
 interface ShardProgressProps {
   info: ShardInfo;
+  className?: string;
 }
 
-export function ShardProgress({ info }: ShardProgressProps) {
+export function ShardProgress({ info, className = '' }: ShardProgressProps) {
   const { application: now } = useNow();
   const { t, i18n } = useTranslation(['progressSection', 'infoSection']);
 
@@ -62,7 +63,9 @@ export function ShardProgress({ info }: ShardProgressProps) {
 
   return useMemo(
     () => (
-      <div className='glass mx-auto flex w-full max-w-lg flex-col items-center justify-center lg:max-w-4xl '>
+      <div
+        className={`glass mx-auto flex w-full max-w-lg flex-col items-center justify-center lg:max-w-4xl ${className}`}
+      >
         <div className='relative top-[1.5em] min-h-[3em] w-full'>
           <div className='relative -left-1 mx-1 h-1 w-full rounded-full'>
             {staticElements}
@@ -97,6 +100,7 @@ export function ShardProgress({ info }: ShardProgressProps) {
       Math.floor(now.minute / 10),
       info.occurrences,
       info.isRed,
+      className,
       LuxonSettings.defaultZone.name,
       i18n.language,
     ],

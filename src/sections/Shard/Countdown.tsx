@@ -5,7 +5,7 @@ import StaticClock, { Countdown } from '../../components/Clock';
 import { useNow } from '../../context/Now';
 import { ShardInfo } from '../../data/shard';
 
-export function ShardCountdownSection({ info }: { info: ShardInfo }) {
+export function ShardCountdownSection({ info, className = '' }: { info: ShardInfo; className?: string }) {
   const { t } = useTranslation(['countdownSection', 'durationFmts']);
   const { application: now } = useNow();
   const { occurrences } = info;
@@ -15,7 +15,9 @@ export function ShardCountdownSection({ info }: { info: ShardInfo }) {
   const countdownTo = upcomming && landed ? occurrences[upcommingIndex]?.end : upcomming?.land;
 
   return (
-    <section className='glass grid min-w-[12rem] auto-cols-auto auto-rows-auto place-items-center gap-x-4 short:min-w-[24rem] short:items-end tall:md:min-w-[16rem]'>
+    <section
+      className={`glass grid min-w-[12rem] auto-cols-auto auto-rows-auto place-items-center gap-x-4 short:min-w-[24rem] short:items-end tall:md:min-w-[16rem] ${className}`}
+    >
       {upcomming ? (
         <>
           <div className='col-start-1 row-start-1 w-full short:col-span-1 short:col-start-2 short:row-start-1 tall:md:col-span-2 '>

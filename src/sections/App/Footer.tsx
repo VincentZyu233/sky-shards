@@ -239,6 +239,9 @@ export function Footer() {
   const [currentSection, setCurrentSection] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isInteracting, setIsInteracting] = useState(false);
+  const [isPageVisible, setIsPageVisible] = useState(() => document.visibilityState === 'visible');
+  const [reduceMotion, setReduceMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const [viewportWidth, setViewportWidth] = useState(0);
   const { i18n, t } = useTranslation('footer');
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -288,6 +291,19 @@ export function Footer() {
     return () => observer.disconnect();
   }, [x]);
 
+  useEffect(() => {
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updateMotionPreference = () => setReduceMotion(motionQuery.matches);
+    const updateVisibility = () => setIsPageVisible(document.visibilityState === 'visible');
+
+    motionQuery.addEventListener('change', updateMotionPreference);
+    document.addEventListener('visibilitychange', updateVisibility);
+    return () => {
+      motionQuery.removeEventListener('change', updateMotionPreference);
+      document.removeEventListener('visibilitychange', updateVisibility);
+    };
+  }, []);
+
   const slideBy = useCallback(
     async (offset: -1 | 1) => {
       if (!viewportWidth || isAnimatingRef.current) return;
@@ -313,7 +329,7 @@ export function Footer() {
   useEffect(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-    if (isDragging || isAnimating) return;
+    if (isDragging || isAnimating || isInteracting || !isPageVisible || reduceMotion) return;
 
     timeoutRef.current = window.setTimeout(() => {
       void slideBy(1);
@@ -324,7 +340,7 @@ export function Footer() {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [currentSection, isAnimating, isDragging, slideBy]);
+  }, [currentSection, isAnimating, isDragging, isInteracting, isPageVisible, reduceMotion, slideBy]);
 
   const showPreviousSection = () => {
     void slideBy(-1);
@@ -339,7 +355,16 @@ export function Footer() {
   const NextFooter = subfooters[(currentSection + 1) % numSubfooters].Footer;
 
   return (
-    <div className='glass relative h-32 w-full overflow-hidden sm:h-28' ref={viewportRef}>
+    <div
+      className='glass relative h-32 w-full shrink-0 overflow-hidden pb-4 sm:h-28'
+      ref={viewportRef}
+      onMouseEnter={() => setIsInteracting(true)}
+      onMouseLeave={() => setIsInteracting(false)}
+      onFocusCapture={() => setIsInteracting(true)}
+      onBlurCapture={event => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setIsInteracting(false);
+      }}
+    >
       <motion.footer
         className={`absolute inset-0 touch-pan-y select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
         style={{ x }}
@@ -386,6 +411,23 @@ export function Footer() {
       >
         <BsChevronRight aria-hidden='true' />
       </button>
+      <div className='absolute bottom-1 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5' role='tablist'>
+        {subfooters.map(({ key }, index) => (
+          <button
+            key={key}
+            type='button'
+            role='tab'
+            aria-label={`Show footer section ${index + 1}`}
+            aria-selected={index === currentSection}
+            className='h-1.5 w-1.5 rounded-full bg-white/40 transition-[width,background-color] hover:bg-white/70 aria-selected:w-4 aria-selected:bg-white'
+            onClick={() => {
+              if (index === currentSection || isAnimatingRef.current) return;
+              const forward = (index - currentSection + numSubfooters) % numSubfooters;
+              void slideBy(forward <= numSubfooters / 2 ? 1 : -1).then(() => setCurrentSection(index));
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 }

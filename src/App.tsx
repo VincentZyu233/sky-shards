@@ -52,7 +52,7 @@ function App() {
       <SettingsProvider>
         <NowProvider>
           <ModalProvider>
-            <div className='absolute inset-1 flex flex-col flex-nowrap overflow-hidden'>
+            <div className='app-shell flex flex-col flex-nowrap overflow-hidden'>
               <Header />
               <ShardCarousel />
               <Footer />

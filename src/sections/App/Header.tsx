@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FaCog, FaCalendarDay, FaEllipsisV, FaAngleRight } from 'react-icons/fa';
+import { FaCalendarDay, FaCog } from 'react-icons/fa';
 import { DateTime } from 'luxon';
 import { DynamicCalendar } from '../../components/Calendar';
 import { ClockNow } from '../../components/Clock';
@@ -15,50 +14,34 @@ import SettingsModal from '../Modals/Settings';
 function HeaderDateTime({ navigateToday }: { navigateToday: () => void }) {
   const { application: now } = useNow();
   const { t } = useTranslation('application');
-  const dateActive = Math.floor(now.second / 6) % 2 === 0;
 
   return (
-    <div
+    <button
+      type='button'
       data-nosnippet
       onClick={navigateToday}
-      className=' flex cursor-pointer flex-col flex-nowrap items-center justify-center gap-x-3 text-center md:flex-row landscape:flex-row'
+      className='flex min-w-0 flex-col items-center justify-center rounded-md px-1 text-center sm:flex-row sm:gap-x-3'
+      title={t('headerDateTimeIndicator')}
     >
       <p className='max-md:hidden'>{t('headerDateTimeIndicator')}</p>
-      <p
-        className='short:swap data-[swap="true"]:short:swap-active max-md:swap data-[swap="true"]:max-md:swap-active tall:md:cursor-pointer tall:md:flex-col tall:md:gap-x-2'
-        data-swap={dateActive}
-      >
-        <DynamicCalendar className='swap-on' />
-        <span className='swap-off md:hidden'>{t('headerDateTimeIndicator')}</span>
-      </p>
-      <ClockNow dualUnit className='text-md xs:text-2xl' relFontSize={0} />
-    </div>
+      <DynamicCalendar className='whitespace-nowrap text-xs xs:text-sm md:text-base' />
+      <ClockNow dualUnit className='whitespace-nowrap text-sm xs:text-lg md:text-xl' relFontSize={0} />
+    </button>
   );
 }
 
 export function HeaderButton({
   children,
   title,
-  isExpand = false,
   onClick,
 }: {
   onClick: () => void;
   children: React.ReactNode;
   title: string;
-  isExpand?: boolean;
 }) {
   return (
-    <div
-      className='tooltip tooltip-bottom hidden *:transition-all data-[expand=true]:block md:block md:data-[expand=true]:hidden max-md:group-data-[expand-menu=true]:block'
-      data-tip={title}
-      data-expand={isExpand}
-    >
-      <button
-        type='button'
-        title={title}
-        className='w-min rounded-lg bg-slate-50 bg-opacity-25 p-1.5 shadow-xl shadow-zinc-700 hover:bg-opacity-50'
-        onClick={onClick}
-      >
+    <div className='tooltip tooltip-bottom' data-tip={title}>
+      <button type='button' title={title} className='icon-button' onClick={onClick}>
         {children}
       </button>
     </div>
@@ -70,47 +53,24 @@ export default function Header() {
   const { server, setSettings } = useSettings();
   const { showModal } = useModal();
   const navigateToday = () => setSettings({ date: DateTime.local({ zone: getServerZone(server) }) });
-  const [expandMenu, setExpandMenu] = useState(false);
   const servers: { value: GameServer; label: string }[] = [
     { value: 'tgc_global', label: '🌍 TGC Global 那游公司国际服' },
     { value: 'netease_cn', label: '🇨🇳 NetEase CN 网易国服' },
   ];
 
   return (
-    <header
-      className='group glass flex max-h-min flex-row flex-nowrap items-center justify-between gap-1 px-2 sm:px-4'
-      data-expand-menu={expandMenu}
-    >
-      <div className='flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-2 max-md:group-data-[expand-menu=true]:hidden'>
+    <header className='glass grid shrink-0 grid-cols-[auto_1fr_auto] grid-rows-[auto_auto] items-center gap-x-2 gap-y-1 px-2 py-1 sm:grid-cols-[auto_minmax(0,1fr)_auto_auto] sm:grid-rows-1 sm:px-3'>
+      <div className='col-start-1 row-start-1 flex min-w-0 items-center sm:justify-self-start'>
         <a href={`${withBasePath('/')}?server=${server}`} onClick={e => (navigateToday(), e.preventDefault())}>
-          <img src={withBasePath('/icons/appName.webp')} alt='Sky Shards' className='h-7 w-auto md:h-10' />
+          <img src={withBasePath('/icons/appName.webp')} alt='Sky Shards' className='h-8 w-auto md:h-10' />
         </a>
-        <div
-          role='group'
-          aria-label='Game server / 游戏服务器'
-          className='flex h-10 shrink-0 flex-col overflow-hidden rounded-md border border-white/30 bg-black/20 shadow-sm backdrop-blur-sm sm:h-7 sm:flex-row md:h-8'
-        >
-          {servers.map(option => {
-            const active = server === option.value;
-            return (
-              <button
-                key={option.value}
-                type='button'
-                aria-pressed={active}
-                title={option.label}
-                className='h-1/2 whitespace-nowrap px-1.5 text-[10px] font-semibold leading-none transition-colors aria-pressed:bg-primary aria-pressed:text-primary-content sm:h-full sm:px-2 sm:text-xs'
-                onClick={() => setSettings({ server: option.value })}
-              >
-                {option.label}
-              </button>
-            );
-          })}
-        </div>
       </div>
 
-      <HeaderDateTime navigateToday={navigateToday} />
+      <div className='col-start-2 row-start-1 min-w-0 justify-self-center sm:col-start-3'>
+        <HeaderDateTime navigateToday={navigateToday} />
+      </div>
 
-      <div className='flex shrink-0 flex-row gap-x-1 sm:gap-x-2'>
+      <div className='col-start-3 row-start-1 flex shrink-0 gap-1 justify-self-end sm:col-start-4'>
         <HeaderButton
           title={t('dateSelector:title')}
           onClick={() => {
@@ -135,9 +95,27 @@ export default function Header() {
         >
           <FaCog size={18} />
         </HeaderButton>
-        <HeaderButton isExpand title='Expand' onClick={() => setExpandMenu(!expandMenu)}>
-          {expandMenu ? <FaAngleRight size={18} /> : <FaEllipsisV size={18} />}
-        </HeaderButton>
+      </div>
+      <div
+        role='group'
+        aria-label='Game server / 游戏服务器'
+        className='join col-span-3 row-start-2 grid w-full grid-cols-2 overflow-hidden rounded-md border border-white/30 bg-black/20 shadow-sm sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:w-auto sm:max-w-full'
+      >
+        {servers.map(option => {
+          const active = server === option.value;
+          return (
+            <button
+              key={option.value}
+              type='button'
+              aria-pressed={active}
+              title={option.label}
+              className='join-item min-h-9 min-w-0 whitespace-normal px-2 text-[11px] font-semibold leading-tight transition-colors aria-pressed:bg-primary aria-pressed:text-primary-content sm:min-h-10 sm:text-xs'
+              onClick={() => setSettings({ server: option.value })}
+            >
+              {option.label}
+            </button>
+          );
+        })}
       </div>
     </header>
   );

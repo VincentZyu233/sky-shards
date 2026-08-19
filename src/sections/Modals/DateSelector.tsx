@@ -51,7 +51,7 @@ export function DateSelectionModal({ hideModal }: ModalProps) {
       </p>
       <div
         data-wide={numCols === '7'}
-        className='no-scrollbar grid max-h-min w-full flex-shrink grid-cols-5 grid-rows-[auto_repeat(7,1fr)] gap-2 overflow-y-scroll px-2 data-[wide=true]:grid-cols-7 data-[wide=true]:grid-rows-[auto_repeat(6,1fr)]'
+        className='no-scrollbar grid max-h-min w-full flex-shrink grid-cols-5 grid-rows-[auto_repeat(7,minmax(2.5rem,1fr))] gap-1 overflow-y-auto px-1 data-[wide=true]:grid-cols-7 data-[wide=true]:grid-rows-[auto_repeat(6,minmax(2.5rem,1fr))] sm:gap-2 sm:px-2'
       >
         {numCols === '7'
           ? Array.from({ length: 7 }, (_, i) => {
@@ -88,7 +88,7 @@ export function DateSelectionModal({ hideModal }: ModalProps) {
             return (
               <button
                 key={`filler-start-${i}`}
-                className='btn btn-outline btn-xs h-full w-full text-white opacity-30 '
+                className='btn btn-outline h-full min-h-10 w-full px-1 text-white opacity-30'
                 onClick={() => changeMonth(-1)}
               >
                 {date.toLocaleString({ day: 'numeric' })}
@@ -107,7 +107,7 @@ export function DateSelectionModal({ hideModal }: ModalProps) {
               title={date.toLocaleString({ month: 'short', day: 'numeric', year: 'numeric' })}
               data-shard={!hasShard ? 'none' : ''}
               data-selected={isSelected}
-              className='btn btn-outline btn-xs block h-full w-full overflow-x-clip !text-white data-[selected=true]:btn-active data-[shard=none]:opacity-30 max-sm:px-0 dark:!text-gray-200'
+              className='btn btn-outline block h-full min-h-10 w-full overflow-x-clip px-1 !text-white data-[selected=true]:btn-active data-[shard=none]:opacity-30 max-sm:px-0 dark:!text-gray-200'
               onClick={e => {
                 e.preventDefault();
                 if (isSelected) return;
@@ -135,7 +135,7 @@ export function DateSelectionModal({ hideModal }: ModalProps) {
             return (
               <button
                 key={`filler-end-${i}`}
-                className='btn btn-outline btn-xs h-full w-full text-white opacity-30 '
+                className='btn btn-outline h-full min-h-10 w-full px-1 text-white opacity-30'
                 onClick={() => changeMonth(1)}
               >
                 {date.toLocaleString({ day: 'numeric' })}
@@ -146,7 +146,7 @@ export function DateSelectionModal({ hideModal }: ModalProps) {
       <div className='mb-2 grid w-full grid-cols-2 grid-rows-2 place-items-center gap-2 lg:grid-cols-4 lg:grid-rows-1'>
         <p className='text-bold justify-self-end'>{t('columnType')}:</p>
         <button
-          className='btn btn-primary swap btn-xs justify-self-start whitespace-nowrap data-[wide=true]:swap-active'
+          className='btn btn-primary swap btn-sm min-h-10 justify-self-start whitespace-nowrap data-[wide=true]:swap-active'
           onClick={() => setSettings({ numCols: numCols === '5' ? '7' : '5' })}
           data-wide={numCols === '7'}
         >
@@ -154,12 +154,18 @@ export function DateSelectionModal({ hideModal }: ModalProps) {
           <span className='swap-off'>{t('columnType.weekday')}</span>
         </button>
 
-        <button className='btn btn-primary btn-xs justify-self-end whitespace-nowrap' onClick={() => changeMonth(-1)}>
+        <button
+          className='btn btn-primary btn-sm min-h-10 justify-self-end whitespace-nowrap'
+          onClick={() => changeMonth(-1)}
+        >
           <BsChevronLeft />
           <span className='max-md:hidden'>{prevMonth.toLocaleString({ month: 'long', year: 'numeric' })}</span>
           <span className='md:hidden'>{prevMonth.toLocaleString({ month: 'short', year: '2-digit' })}</span>
         </button>
-        <button className='btn btn-primary btn-xs justify-self-start whitespace-nowrap' onClick={() => changeMonth(1)}>
+        <button
+          className='btn btn-primary btn-sm min-h-10 justify-self-start whitespace-nowrap'
+          onClick={() => changeMonth(1)}
+        >
           <span className='md:hidden'>{nextMonth.toLocaleString({ month: 'short', year: '2-digit' })}</span>
           <span className='max-md:hidden'>{nextMonth.toLocaleString({ month: 'long', year: 'numeric' })}</span>
           <BsChevronRight />

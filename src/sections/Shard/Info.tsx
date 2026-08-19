@@ -13,10 +13,11 @@ interface ShardInfoSectionProps {
   remoteDailyConfig?: DailyConfig;
   remoteAuthorNames?: Record<string, string>;
   toggleOverride: () => void;
+  className?: string;
 }
 
 export const ShardInfoSection = forwardRef<HTMLDivElement, ShardInfoSectionProps>(function ShardInfoSection(
-  { info, remoteDailyConfig, remoteAuthorNames, toggleOverride },
+  { info, remoteDailyConfig, remoteAuthorNames, toggleOverride, className = '' },
   ref,
 ) {
   const { legTimeline } = useSettings();
@@ -52,7 +53,7 @@ export const ShardInfoSection = forwardRef<HTMLDivElement, ShardInfoSectionProps
   if (!info.hasShard) {
     return (
       <div
-        className='flex max-h-screen min-h-full w-full flex-col flex-nowrap items-center justify-center gap-1'
+        className={`flex max-h-screen min-h-full w-full flex-col flex-nowrap items-center justify-center gap-1 ${className}`}
         ref={ref}
       >
         <section className='glass'>
@@ -70,7 +71,7 @@ export const ShardInfoSection = forwardRef<HTMLDivElement, ShardInfoSectionProps
     );
   }
   return (
-    <section className='glass max-w-full'>
+    <section className={`glass max-w-full ${className}`}>
       {info.server === 'netease_cn' && (
         <small className='block text-[0.75em] font-semibold opacity-75'>🇨🇳 国服排期 / NetEase CN schedule</small>
       )}

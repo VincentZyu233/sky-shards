@@ -33,6 +33,8 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
   const [onHidden, setOnHidden] = useState<(() => void) | undefined>(undefined);
   const [title, setTitle] = useState<string | undefined>(undefined);
   const switchAnimate = useRef(false);
+  const modalBoxRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
   const existingPopStateListener = useRef<typeof window.onpopstate>(window.onpopstate);
 
   const keydownListener = useCallback((e: KeyboardEvent) => {
@@ -49,14 +51,21 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
     window.onpopstate = existingPopStateListener.current;
     existingPopStateListener.current = null;
     window.removeEventListener('keydown', keydownListener);
+    previouslyFocusedRef.current?.focus();
   };
 
   const showModal = (props: ShowModalOption) => {
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
     window.addEventListener('keydown', keydownListener);
     existingPopStateListener.current = window.onpopstate;
     window.onpopstate = () => hideModal();
     setModalProps(props);
   };
+
+  useEffect(() => {
+    if (!modalProps) return;
+    requestAnimationFrame(() => modalBoxRef.current?.focus());
+  }, [modalProps]);
 
   useEffect(() => {
     if (modalProps?.onHidden) {
@@ -79,9 +88,14 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
         className='modal data-[open=true]:modal-open'
         onClick={() => modalProps?.hideOnOverlayClick && hideModal()}
         data-open={!!modalProps}
+        role='dialog'
+        aria-modal='true'
+        aria-label={title}
       >
         <div
-          className='glass modal-box my-4 !w-max cursor-default rounded-lg transition-[width,height] sm:container sm:mx-auto short:max-h-[80vh] max-sm:max-w-[80vw]'
+          ref={modalBoxRef}
+          tabIndex={-1}
+          className='glass modal-box m-2 max-h-[calc(100dvh-1rem)] w-[calc(100vw-1rem)] max-w-5xl cursor-default overflow-hidden transition-[width,height] sm:m-4'
           onClick={e => e.stopPropagation()}
         >
           {(switchAnimate.current = !switchAnimate.current)}
@@ -89,11 +103,17 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
           {modalProps && (
             <>
               {!modalProps.hideCloseButton && (
-                <button type='button' title='Close' className='absolute right-4 top-2' onClick={() => hideModal()}>
+                <button
+                  type='button'
+                  title='Close'
+                  aria-label='Close'
+                  className='icon-button absolute right-2 top-2 z-10'
+                  onClick={() => hideModal()}
+                >
                   <ImCross />
                 </button>
               )}
-              <div className='overflow-y-auto'>
+              <div className='no-scrollbar max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain px-1 pb-2 pt-1'>
                 <modalProps.children hideModal={hideModal} setOnHidden={setOnHiddenWrapper} setTitle={setTitle} />
               </div>
             </>

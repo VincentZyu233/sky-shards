@@ -48,7 +48,7 @@ export default function SettingModal({ hideModal }: ModalProps) {
           ].map(([label, value]) => (
             <button
               key={value}
-              className='btn btn-primary join-item btn-xs flex-1 whitespace-nowrap'
+              className='btn btn-primary join-item btn-sm min-h-10 flex-1 whitespace-nowrap'
               disabled={lightMode === value}
               onClick={() => setSettings({ lightMode: value as 'true' | 'system' | 'false' })}
             >
@@ -68,7 +68,7 @@ export default function SettingModal({ hideModal }: ModalProps) {
           ].map(([label, value]) => (
             <button
               key={value}
-              className='btn btn-primary join-item btn-xs flex-1 whitespace-nowrap'
+              className='btn btn-primary join-item btn-sm min-h-10 flex-1 whitespace-nowrap'
               disabled={twelveHourMode === value}
               onClick={() => setSettings({ twelveHourMode: value as 'true' | 'system' | 'false' })}
             >
@@ -89,7 +89,7 @@ export default function SettingModal({ hideModal }: ModalProps) {
           </span>
         </p>
         <select
-          className='no-scrollbar select select-primary select-xs mt-1 w-full bg-primary text-primary-content'
+          className='no-scrollbar select select-primary select-sm mt-1 min-h-10 w-full bg-primary text-primary-content'
           onChange={e => setSettings({ timezone: e.target.value === systemZone ? 'system' : e.target.value })}
           value={timezone === 'system' ? systemZone : timezone}
         >
@@ -115,7 +115,7 @@ export default function SettingModal({ hideModal }: ModalProps) {
         </p>
 
         <select
-          className='no-scrollbar select select-primary select-xs mt-1 w-full bg-primary text-primary-content'
+          className='no-scrollbar select select-primary select-sm mt-1 min-h-10 w-full bg-primary text-primary-content'
           onChange={e => setSettings({ lang: e.target.value })}
           value={lang}
         >
@@ -172,14 +172,14 @@ export default function SettingModal({ hideModal }: ModalProps) {
         <p className='text-bold w-full text-center'>{t('fontSize.title')}</p>
         <div className='mt-1 flex w-full flex-row items-center justify-center gap-2'>
           <button
-            className='btn btn-circle btn-primary btn-xs'
+            className='btn btn-circle btn-primary btn-sm min-h-10 min-w-10'
             onClick={() => setSettings({ fontSize: (parseFloat(fontSize) - 0.1).toFixed(1) })} // 0.1 is the step
           >
             <FaMinus size={12} />
           </button>
           <p>{fontSize}</p>
           <button
-            className='btn btn-circle btn-primary btn-xs'
+            className='btn btn-circle btn-primary btn-sm min-h-10 min-w-10'
             onClick={() => setSettings({ fontSize: (parseFloat(fontSize) + 0.1).toFixed(1) })} // 0.1 is the step
           >
             <FaPlus size={12} />
