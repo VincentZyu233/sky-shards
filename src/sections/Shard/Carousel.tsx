@@ -77,13 +77,13 @@ export default function ShardCarousel() {
 
   return (
     <div
-      className='grid h-full max-h-full w-full select-none grid-cols-[2rem_auto_2rem] grid-rows-[auto] items-center justify-items-center gap-1 overflow-hidden p-2 text-center'
+      className='grid h-full min-h-0 w-full select-none grid-cols-[2.75rem_minmax(0,1fr)_2.75rem] items-center justify-items-center gap-2 overflow-hidden px-1 py-2 text-center sm:px-2'
       ref={carouselRef}
     >
       <AnimatePresence initial={false} custom={direction}>
         <motion.main
           key={date.toISODate()}
-          className='no-scrollbar col-start-2 row-start-1 flex h-full max-h-full w-full flex-col flex-nowrap items-center justify-start gap-2 overflow-x-hidden overflow-y-scroll text-center'
+          className='no-scrollbar col-start-2 row-start-1 flex h-full min-h-0 w-full max-w-7xl flex-col items-center gap-4 overflow-y-auto overflow-x-hidden px-1 pb-4 text-center sm:px-3'
           initial='enter'
           animate='center'
           exit='exit'
@@ -103,20 +103,29 @@ export default function ShardCarousel() {
           }}
           style={{ fontSize: `${fontSize}em` }}
         >
-          <div className='flex max-h-screen min-h-full w-full flex-col flex-nowrap items-center justify-center gap-1'>
+          <div className='grid min-h-full w-full content-center items-stretch gap-3 py-3 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)] lg:grid-rows-[auto_auto_auto]'>
             <ShardInfoSection
               info={info}
               remoteDailyConfig={remoteDailyConfig}
               remoteAuthorNames={remoteConfig?.authorNames}
               toggleOverride={() => setApplyOverride(!applyOverride)}
+              className='w-full px-4 py-3 shadow-md shadow-black/15 lg:col-start-1 lg:row-start-1'
             />
 
             {info.hasShard && (
               <>
-                {legTimeline && <ShardProgressSection info={info} />}
-                <ShardCountdownSection info={info} />
+                {legTimeline && (
+                  <ShardProgressSection
+                    info={info}
+                    className='max-w-none px-4 py-2 shadow-md shadow-black/15 lg:col-start-1 lg:row-start-2'
+                  />
+                )}
+                <ShardCountdownSection
+                  info={info}
+                  className='w-full min-w-0 px-5 py-5 shadow-lg shadow-black/20 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-full lg:content-center'
+                />
                 <small
-                  className='flex cursor-pointer flex-col items-center justify-center text-xs [@media_(min-height:_640px)]:xl:text-lg'
+                  className='flex cursor-pointer flex-col items-center justify-center text-xs opacity-75 lg:col-span-2 lg:row-start-3 [@media_(min-height:_640px)]:xl:text-base'
                   onClick={() => {
                     const carousel = carouselRef.current;
                     const content = carousel?.children[0];
@@ -131,7 +140,7 @@ export default function ShardCarousel() {
             )}
           </div>
           {info.hasShard && (
-            <div className='flex flex-row flex-wrap items-start justify-center gap-6'>
+            <div className='grid w-full grid-cols-1 items-start justify-items-center gap-4 rounded-lg border border-white/15 bg-black/10 p-3 md:grid-cols-2 xl:grid-cols-3'>
               <ShardMemoryInfographic remoteDailyConfig={remoteDailyConfig} authorNames={remoteConfig?.authorNames} />
               <ShardMapInfographic
                 info={info}
@@ -145,25 +154,35 @@ export default function ShardCarousel() {
       </AnimatePresence>
       <a
         href={`${withBasePath(`/${lang}/${ytd.toFormat('yyyy/MM/dd')}`)}?server=${server}`}
-        className='relative col-start-1 row-start-1 flex cursor-pointer flex-col-reverse items-center justify-center gap-2 text-xs [@media_(min-height:_640px)]:xl:text-lg'
+        className='group relative col-start-1 row-start-1 flex h-full cursor-pointer flex-col-reverse items-center justify-center gap-2 text-xs'
         onClick={e => {
           e.preventDefault();
           setSettings({ date: ytd });
         }}
       >
-        <span className='leading-none [writing-mode:vertical-rl]'>{t('navigation.rightwards')}</span>
-        <BsChevronRight className='m-0 shrink-0' strokeWidth={'0.1rem'} />
+        <span className='hidden leading-none opacity-70 [writing-mode:vertical-rl] md:block'>
+          {t('navigation.rightwards')}
+        </span>
+        <BsChevronRight
+          className='m-0 h-11 w-11 shrink-0 rounded-md border border-white/20 bg-black/25 p-3 group-hover:bg-black/40'
+          strokeWidth={'0.1rem'}
+        />
       </a>
       <a
         href={`${withBasePath(`/${lang}/${tmr.toFormat('yyyy/MM/dd')}`)}?server=${server}`}
-        className='relative col-start-3 row-start-1 flex cursor-pointer flex-col items-center justify-center gap-2 text-xs [@media_(min-height:_640px)]:xl:text-lg'
+        className='group relative col-start-3 row-start-1 flex h-full cursor-pointer flex-col items-center justify-center gap-2 text-xs'
         onClick={e => {
           e.preventDefault();
           setSettings({ date: tmr });
         }}
       >
-        <span className='leading-none [writing-mode:vertical-rl]'>{t('navigation.leftwards')}</span>
-        <BsChevronLeft className='m-0 shrink-0' strokeWidth={'0.1rem'} />
+        <span className='hidden leading-none opacity-70 [writing-mode:vertical-rl] md:block'>
+          {t('navigation.leftwards')}
+        </span>
+        <BsChevronLeft
+          className='m-0 h-11 w-11 shrink-0 rounded-md border border-white/20 bg-black/25 p-3 group-hover:bg-black/40'
+          strokeWidth={'0.1rem'}
+        />
       </a>
     </div>
   );
