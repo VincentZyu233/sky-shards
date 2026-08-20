@@ -1,12 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { FaCalendarDay, FaCog } from 'react-icons/fa';
-import { DateTime } from 'luxon';
+import { FaCalendarDay, FaClock, FaCog } from 'react-icons/fa';
 import { DynamicCalendar } from '../../components/Calendar';
 import { ClockNow } from '../../components/Clock';
 import { useModal } from '../../context/ModalContext';
 import { useNow } from '../../context/Now';
 import { useSettings } from '../../context/Settings';
-import { GameServer, getServerTimeZonePresentation, getServerZone } from '../../data/server';
+import { GameServer, getServerTimeZonePresentation } from '../../data/server';
 import { withBasePath } from '../../utils/basePath';
 import DateSelectionModal from '../Modals/DateSelector';
 import SettingsModal from '../Modals/Settings';
@@ -46,14 +45,23 @@ export function HeaderButton({
   children,
   title,
   onClick,
+  pressed,
 }: {
   onClick: () => void;
   children: React.ReactNode;
   title: string;
+  pressed?: boolean;
 }) {
   return (
     <div className='tooltip tooltip-bottom' data-tip={title}>
-      <button type='button' title={title} className='icon-button' onClick={onClick}>
+      <button
+        type='button'
+        title={title}
+        aria-label={title}
+        aria-pressed={pressed}
+        className='icon-button aria-pressed:bg-primary aria-pressed:text-primary-content'
+        onClick={onClick}
+      >
         {children}
       </button>
     </div>
@@ -62,17 +70,22 @@ export function HeaderButton({
 
 export default function Header() {
   const { t } = useTranslation(['application', 'dateSelector', 'settings']);
-  const { fontSize, server, setSettings } = useSettings();
+  const { application: now } = useNow();
+  const { date, fontSize, server, setSettings } = useSettings();
   const { showModal } = useModal();
-  const navigateToday = () => setSettings({ date: DateTime.local({ zone: getServerZone(server) }) });
+  const isToday = date.hasSame(now, 'day');
+  const navigateToday = () => {
+    if (!isToday) setSettings({ date: now.startOf('day') });
+  };
+  const nowActionLabel = 'Go to current schedule / 切换到当前安排';
   const servers: { value: GameServer; label: string }[] = [
     { value: 'tgc_global', label: '🌍 TGC Global 那游公司国际服' },
     { value: 'netease_cn', label: '🇨🇳 NetEase CN 网易国服' },
   ];
 
   return (
-    <header className='glass grid shrink-0 grid-cols-[auto_1fr_auto] grid-rows-[auto_auto] items-center gap-x-2 gap-y-1 px-2 py-1 sm:grid-cols-[auto_minmax(0,1fr)_auto_auto] sm:grid-rows-1 sm:px-3'>
-      <div className='col-start-1 row-start-1 flex min-w-0 items-center sm:justify-self-start'>
+    <header className='glass grid shrink-0 grid-cols-[auto_1fr_auto] grid-rows-[auto_auto] items-center gap-x-2 gap-y-1 px-2 py-1 lg:grid-cols-[auto_minmax(0,1fr)_auto_auto] lg:grid-rows-1 lg:px-3'>
+      <div className='col-start-1 row-start-1 flex min-w-0 items-center lg:justify-self-start'>
         <a
           href={`${withBasePath('/')}?fontSize=${encodeURIComponent(fontSize)}&server=${server}`}
           onClick={e => (navigateToday(), e.preventDefault())}
@@ -81,11 +94,11 @@ export default function Header() {
         </a>
       </div>
 
-      <div className='col-start-2 row-start-1 min-w-0 justify-self-center sm:col-start-3'>
+      <div className='col-start-2 row-start-1 min-w-0 justify-self-center lg:col-start-3'>
         <HeaderDateTime navigateToday={navigateToday} server={server} />
       </div>
 
-      <div className='col-start-3 row-start-1 flex shrink-0 gap-1 justify-self-end sm:col-start-4'>
+      <div className='col-start-3 row-start-1 flex shrink-0 gap-1 justify-self-end lg:col-start-4'>
         <HeaderButton
           title={t('dateSelector:title')}
           onClick={() => {
@@ -97,6 +110,9 @@ export default function Header() {
           }}
         >
           <FaCalendarDay size={18} />
+        </HeaderButton>
+        <HeaderButton title={nowActionLabel} pressed={isToday} onClick={navigateToday}>
+          <FaClock aria-hidden='true' size={18} />
         </HeaderButton>
         <HeaderButton
           title={t('settings:title')}
@@ -114,7 +130,7 @@ export default function Header() {
       <div
         role='group'
         aria-label='Game server / 游戏服务器'
-        className='join col-span-3 row-start-2 grid w-full grid-cols-2 overflow-hidden rounded-md border border-white/30 bg-black/20 shadow-sm sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:w-auto sm:max-w-full'
+        className='join col-span-3 row-start-2 grid w-full grid-cols-2 overflow-hidden rounded-md border border-white/30 bg-black/20 shadow-sm lg:col-span-1 lg:col-start-2 lg:row-start-1 lg:w-auto lg:max-w-full'
       >
         {servers.map(option => {
           const active = server === option.value;

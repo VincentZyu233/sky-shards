@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BsChevronLeft, BsChevronRight } from 'react-icons/bs';
+import { FaClock } from 'react-icons/fa';
 import { DateTime } from 'luxon';
 import { Settings as LuxonSettings } from 'luxon';
 import type { ModalProps } from '../../context/ModalContext';
@@ -15,6 +16,8 @@ export function DateSelectionModal({ hideModal }: ModalProps) {
   const { date: selectedDate, lang, numCols, server, setSettings } = useSettings();
   const eventZone = getServerZone(server);
   const today = DateTime.local({ zone: eventZone });
+  const isTodaySelected = selectedDate.hasSame(today, 'day');
+  const nowActionLabel = 'Go to current schedule / 切换到当前安排';
 
   const navigateDay = useCallback((date: DateTime) => setSettings({ date }), [setSettings]);
   const [{ year, month }, setYearMonth] = useState(() => ({ year: selectedDate.year, month: selectedDate.month }));
@@ -143,7 +146,7 @@ export function DateSelectionModal({ hideModal }: ModalProps) {
             );
           })}
       </div>
-      <div className='mb-2 grid w-full grid-cols-2 grid-rows-2 place-items-center gap-2 lg:grid-cols-4 lg:grid-rows-1'>
+      <div className='mb-2 grid w-full grid-cols-2 place-items-center gap-2 lg:grid-cols-4'>
         <p className='text-bold justify-self-end'>{t('columnType')}:</p>
         <button
           className='btn btn-primary swap btn-sm min-h-10 justify-self-start whitespace-nowrap data-[wide=true]:swap-active'
@@ -169,6 +172,22 @@ export function DateSelectionModal({ hideModal }: ModalProps) {
           <span className='md:hidden'>{nextMonth.toLocaleString({ month: 'short', year: '2-digit' })}</span>
           <span className='max-md:hidden'>{nextMonth.toLocaleString({ month: 'long', year: 'numeric' })}</span>
           <BsChevronRight />
+        </button>
+        <button
+          type='button'
+          title={nowActionLabel}
+          aria-label={nowActionLabel}
+          aria-pressed={isTodaySelected}
+          className={`btn btn-sm col-span-2 min-h-10 w-full whitespace-normal lg:col-span-4 ${
+            isTodaySelected ? 'btn-primary btn-active' : 'btn-outline'
+          }`}
+          onClick={() => {
+            hideModal();
+            if (!isTodaySelected) setTimeout(() => navigateDay(today.startOf('day')), 100);
+          }}
+        >
+          <FaClock aria-hidden='true' />
+          <span>Now / 当前安排</span>
         </button>
       </div>
     </div>
