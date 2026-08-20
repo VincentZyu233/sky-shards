@@ -6,12 +6,13 @@ Path: /, /date/{yyyy}/{MM}/{dd}, date/{relDate}
 Query: gsTrans=1, lang=xx.
 
 new URL Format:
-Path: /, /{yyyy}/{MM}/{dd}, /{lang}/{yyyy}/{MM}/{dd},
-Query: server=(tgc_global|netease_cn), fontSize, gsTrans=1, twelveHour=(true|false|system), lightMode=(true|false|system), timezone.
+Path: /, /{relDate}, /{lang}/{relDate}, /{yyyy}/{MM}/{dd}, /{lang}/{yyyy}/{MM}/{dd},
+Query: server=(tgc_global|netease_cn), fontSize, numCols=(5|7), legTimeline=(0|1), gsTrans=(0|1),
+twelveHourMode=(true|false|system), lightMode=(true|false|system), timezone=(system|IANA zone).
 */
 import { useState, useCallback, createContext, useContext, useMemo } from 'react';
 import i18next from 'i18next';
-import { DateTime, Settings as LuxonSettings } from 'luxon';
+import { DateTime, IANAZone, Settings as LuxonSettings } from 'luxon';
 import { dateInServerZone, GameServer, getServerZone, isGameServer, parseGameServer } from '../data/server';
 import useLegacyEffect from '../hooks/useLegacyEffect';
 import { languageCode } from '../i18n';
@@ -28,9 +29,26 @@ const relDateMap = {
   overmorrow: 2,
 } as const;
 
+const displayModeValues = ['true', 'false', 'system'] as const;
+
+function isDisplayMode(value: unknown): value is (typeof displayModeValues)[number] {
+  return typeof value === 'string' && displayModeValues.includes(value as (typeof displayModeValues)[number]);
+}
+
+function isRelativeDate(value: string): value is keyof typeof relDateMap {
+  return value in relDateMap;
+}
+
+function parseBooleanParam(value: string | null): boolean | undefined {
+  if (value === '1') return true;
+  if (value === '0') return false;
+  return undefined;
+}
+
 function isOldUrlFormat(url: URL) {
   const { pathname, searchParams } = url;
-  return pathname.includes('date') || searchParams.has('lang');
+  const [route] = pathname.split('/').filter(Boolean);
+  return route === 'date' || searchParams.has('lang');
 }
 
 interface SettingsOld {
@@ -98,6 +116,11 @@ export function normalizeFontSize(value: unknown): string {
   return Number.isFinite(parsed) && parsed > 0 ? String(parsed) : DEFAULT_FONT_SIZE;
 }
 
+export function normalizeLastWarn(value: unknown): number | undefined {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : undefined;
+}
+
 function validifySettings(settings: Partial<SettingsNew>) {
   // check if lang is in languageCode
   if ('lang' in settings && settings.lang && !(settings.lang in languageCode)) {
@@ -108,6 +131,26 @@ function validifySettings(settings: Partial<SettingsNew>) {
   }
   if ('fontSize' in settings) {
     settings.fontSize = normalizeFontSize(settings.fontSize);
+  }
+  if ('twelveHourMode' in settings && !isDisplayMode(settings.twelveHourMode)) {
+    delete settings.twelveHourMode;
+  }
+  if ('lightMode' in settings && !isDisplayMode(settings.lightMode)) {
+    delete settings.lightMode;
+  }
+  if ('timezone' in settings && settings.timezone !== 'system' && !IANAZone.isValidZone(settings.timezone ?? '')) {
+    delete settings.timezone;
+  }
+  if ('numCols' in settings && settings.numCols !== '5' && settings.numCols !== '7') {
+    delete settings.numCols;
+  }
+  if ('legTimeline' in settings && typeof settings.legTimeline !== 'boolean') {
+    delete settings.legTimeline;
+  }
+  if ('lastWarn' in settings) {
+    const lastWarn = normalizeLastWarn(settings.lastWarn);
+    if (lastWarn !== undefined) settings.lastWarn = lastWarn;
+    else delete settings.lastWarn;
   }
 
   return settings;
@@ -134,46 +177,87 @@ function parseNewUrl(url: URL): SettingsNew {
   if (pathname) {
     const [yearLangOrRel, ...dateParts] = pathname.split('/');
     if (yearLangOrRel) {
-      if (yearLangOrRel in relDateMap) {
-        // first part is rel date
-        ret.date = DateTime.now()
-          .setZone(appZone)
-          .plus({ days: relDateMap[yearLangOrRel as keyof typeof relDateMap] });
+      if (isRelativeDate(yearLangOrRel)) {
+        ret.date = DateTime.now().setZone(appZone).startOf('day').plus({ days: relDateMap[yearLangOrRel] });
+        dateParts.length = 0;
       } else if (!/^\d+$/.test(yearLangOrRel)) {
-        // first part is lang
         ret.lang = yearLangOrRel;
+        const relativeDate = dateParts[0];
+        if (relativeDate && isRelativeDate(relativeDate)) {
+          ret.date = DateTime.now().setZone(appZone).startOf('day').plus({ days: relDateMap[relativeDate] });
+          dateParts.length = 0;
+        }
       } else {
-        // first part is year
         dateParts.unshift(yearLangOrRel);
       }
 
       if (dateParts.length !== 0) {
-        // parse the dates
         const [yearStr, monthStr, dayStr] = dateParts;
-        const year = parseInt(yearStr.length === 2 ? `20${yearStr}` : yearStr, 10);
-        const month = monthStr ? parseInt(monthStr, 10) : 1;
-        const day = dayStr ? parseInt(dayStr, 10) : 1;
+        const year = /^\d+$/.test(yearStr) ? parseInt(yearStr.length === 2 ? `20${yearStr}` : yearStr, 10) : 0;
+        const month = !monthStr || /^\d+$/.test(monthStr) ? (monthStr ? parseInt(monthStr, 10) : 1) : 0;
+        const day = !dayStr || /^\d+$/.test(dayStr) ? (dayStr ? parseInt(dayStr, 10) : 1) : 0;
         if (year && month && day) {
-          ret.date = DateTime.local(year, month, day, { zone: appZone });
+          const date = DateTime.local(year, month, day, { zone: appZone });
+          if (date.isValid) ret.date = date;
         }
       }
     }
   }
 
   //Parse the query params
-  const gsTrans = searchParams.has('gsTrans') ? searchParams.get('gsTrans') === '1' : false;
-  if (gsTrans) ret.gsTrans = gsTrans;
-  const twelveHourMode = searchParams.get('twelveHour') as 'true' | 'false' | 'system';
-  if (twelveHourMode) ret.twelveHourMode = twelveHourMode;
-  const lightMode = searchParams.get('lightMode') as 'true' | 'false' | 'system';
-  if (lightMode) ret.lightMode = lightMode;
+  const gsTrans = parseBooleanParam(searchParams.get('gsTrans'));
+  if (gsTrans !== undefined) ret.gsTrans = gsTrans;
+  const twelveHourMode = searchParams.get('twelveHourMode') ?? searchParams.get('twelveHour');
+  if (isDisplayMode(twelveHourMode)) ret.twelveHourMode = twelveHourMode;
+  const lightMode = searchParams.get('lightMode');
+  if (isDisplayMode(lightMode)) ret.lightMode = lightMode;
   const timezone = searchParams.get('timezone');
-  if (timezone) ret.timezone = timezone;
+  if (timezone === 'system' || (timezone && IANAZone.isValidZone(timezone))) ret.timezone = timezone;
   ret.fontSize = normalizeFontSize(searchParams.get('fontSize'));
-  const numCols = searchParams.get('numCols') as '5' | '7';
-  if (numCols) ret.numCols = numCols;
+  const numCols = searchParams.get('numCols');
+  if (numCols === '5' || numCols === '7') ret.numCols = numCols;
+  const legTimeline = parseBooleanParam(searchParams.get('legTimeline'));
+  if (legTimeline !== undefined) ret.legTimeline = legTimeline;
 
   return ret;
+}
+
+export function parseSettingsUrl(url: URL): SettingsNew {
+  return validifySettings(isOldUrlFormat(url) ? parseOldUrl(url) : parseNewUrl(url));
+}
+
+const sharedSettingKeys = ['twelveHourMode', 'lightMode', 'timezone', 'numCols', 'legTimeline'] as const;
+
+export function serializeSettings(settings: SettingsNew, defaults: SettingsNew) {
+  const urlParams = new URLSearchParams();
+  const localSettings: Partial<SettingsNew> = {};
+
+  if (settings.server) {
+    urlParams.set('server', settings.server);
+    localSettings.server = settings.server;
+  }
+  if (settings.fontSize !== undefined) {
+    const fontSize = normalizeFontSize(settings.fontSize);
+    urlParams.set('fontSize', fontSize);
+    if (fontSize !== defaults.fontSize) localSettings.fontSize = fontSize;
+  }
+  if (settings.lang && settings.lang !== defaults.lang) localSettings.lang = settings.lang;
+  if (settings.gsTrans !== undefined && settings.gsTrans !== defaults.gsTrans) {
+    urlParams.set('gsTrans', settings.gsTrans ? '1' : '0');
+  }
+  if (settings.lastWarn !== undefined && settings.lastWarn !== defaults.lastWarn) {
+    localSettings.lastWarn = settings.lastWarn;
+  }
+
+  for (const key of sharedSettingKeys) {
+    const value = settings[key];
+    if (value !== undefined && value !== defaults[key]) {
+      urlParams.set(key, typeof value === 'boolean' ? (value ? '1' : '0') : value);
+      Object.assign(localSettings, { [key]: value });
+    }
+  }
+
+  return { urlParams, localSettings };
 }
 
 function getLocalStorageSettings(): SettingsNew {
@@ -381,7 +465,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const settings = useMemo(() => {
     const url = new URL(window.location.href);
     url.pathname = stripBasePath(url.pathname);
-    const parsed = validifySettings(isOldUrlFormat(url) ? parseOldUrl(url) : parseNewUrl(url));
+    const parsed = parseSettingsUrl(url);
     return { ...resolvedLocal, ...parsed };
   }, [resolvedLocal]);
 
@@ -397,9 +481,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         if (isInit) {
           const currentUrl = new URL(window.location.href);
           currentUrl.pathname = stripBasePath(currentUrl.pathname);
-          const parsed = validifySettings(
-            isOldUrlFormat(currentUrl) ? parseOldUrl(currentUrl) : parseNewUrl(currentUrl),
-          );
+          const parsed = parseSettingsUrl(currentUrl);
           settings = { ...old, ...parsed };
         } else {
           const normalizedEdits = validifySettings({ ...edits });
@@ -435,34 +517,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
           });
         }
 
-        const urlParams = new URLSearchParams();
-        const localParams = new Map<string, string | number | boolean>();
-
-        Object.entries(settings).forEach(([key, val]) => {
-          if (key === 'date') return;
-          if (key === 'server') {
-            urlParams.set(key, val as string);
-            localParams.set(key, String(val));
-            return;
-          }
-          if (key === 'fontSize') {
-            urlParams.set(key, normalizeFontSize(val));
-            if (val !== def.fontSize) localParams.set(key, normalizeFontSize(val));
-            return;
-          }
-          if (key === 'lang' && val !== def.lang) {
-            // lang is handled in the path and localStorage
-            localParams.set(key, String(val));
-            return;
-          }
-          const dVal = def[key as Exclude<keyof SettingsNew, 'date' | 'lang'>];
-          const d = typeof dVal === 'boolean' ? (dVal ? '1' : '0') : dVal;
-          const v = typeof val === 'boolean' ? (val ? '1' : '0') : val;
-          if (d !== v) {
-            urlParams.set(key, v as string);
-            localParams.set(key, String(v));
-          }
-        });
+        const { urlParams, localSettings } = serializeSettings(settings, def);
 
         if (setUrl) {
           url.search = urlParams.toString();
@@ -477,7 +532,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
           if (pushHistory && !isInit) history.pushState(null, '', url);
           else history.replaceState(null, '', url);
         }
-        setLocalStorageSettings(Object.fromEntries(localParams));
+        setLocalStorageSettings(localSettings);
         return settings;
       });
     },
@@ -492,7 +547,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const handlePopState = () => {
       const url = new URL(window.location.href);
       url.pathname = stripBasePath(url.pathname);
-      const urlSettings = parseNewUrl(url);
+      const urlSettings = parseSettingsUrl(url);
       const parsed = { ...getDefault(urlSettings.server), ...urlSettings };
 
       const diff = Object.fromEntries(

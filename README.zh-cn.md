@@ -58,21 +58,30 @@ Google 表格链接：[Sky Shard Translation](https://docs.google.com/spreadshee
 - `/:lang` - 翻译语言
   - 可用语言列在 [Google 表格](https://docs.google.com/spreadsheets/d/16eSANTI310SY8uWjsjbxNBzyD-49hwF3OGYRkFPykoo/edit#gid=2102926823)中
 - 相对日期
-  - `/:lang/tomorrow` 或 `/tmr` - 明日碎片喷发页面
-  - `/:lang/yesterday` 或 `/ytd` - 昨日碎片喷发页面
-- `/:lang/:year/:month/:day` - 指定日期的碎片喷发页面，例如：
-  - `/:lang/2022/12/31` 2022 年 12 月 31 日的碎片喷发页面
-  - `/:lang/2023/1/1` 2023 年 1 月 1 日的碎片喷发页面
+  - `/:lang/tomorrow`、`/:lang/tmr`、`/tomorrow` 或 `/tmr` - 明日碎片喷发页面
+  - `/:lang/yesterday`、`/:lang/ytd`、`/yesterday` 或 `/ytd` - 昨日碎片喷发页面
+- `/:lang/:year/:month/:day` - 指定日期的碎片喷发页面
+
+> 以 `:` 开头的名称是占位符，冒号不是实际 URL 的一部分。请将 `:lang` 替换为 `en`、`zh` 等语言代码，并将日期占位符替换为所需日期。
+>
+> 示例：
+>
+> - `/zh/2026/08/20?server=netease_cn`
+> - `/en/2026/08/20?server=tgc_global`
+> - `/zh/tomorrow?server=netease_cn`
 
 ### ⚙️ 查询参数
 
-- `server` - 游戏服务器（`tgc_global` | `netease_cn`）；缺失或无效值会被规范化为 `tgc_global`
-- `gsTrans` - 获取 Google 表格翻译（`1` | `0`）
-- `twelveHour` - 以 12 小时制显示时间（`true` | `false` | `system`）
-- `lightMode` - 浅色模式（`true` | `false` | `system`）
-- `timezone` - 时区 [IANA 时区](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)（`string`）
-- `fontSize` - 内容字号倍率（`number`）；缺失或无效值会被规范化为 `1`
-- `numCols` - 日期选择器表格的列数（`number`）
+- `server` - 游戏服务器（`tgc_global` | `netease_cn`）；默认值为 `tgc_global`
+- `gsTrans` - 获取 Google 表格翻译（`1` | `0`）；默认值为 `0`，仅对当前 URL 生效
+- `twelveHourMode` - 时间显示格式（`true` | `false` | `system`）；默认值为 `system`；继续兼容旧版 `twelveHour` URL
+- `lightMode` - 页面主题（`true` | `false` | `system`）；默认值为 `system`
+- `timezone` - 时区（`system` | 有效的 [IANA 时区标识符](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)，例如 `Asia/Shanghai`）；默认值为 `system`
+- `fontSize` - 内容字号倍率（正数）；默认值为 `1`
+- `numCols` - 日期选择器的列数（`5` | `7`）；默认值为 `5`
+- `legTimeline` - 使用旧版时间线显示（`1` | `0`）；默认值为 `1`
+
+> 示例：`?server=netease_cn&twelveHourMode=true&fontSize=1.2&legTimeline=0`
 
 ## 🛠️ 开发
 
@@ -109,7 +118,7 @@ pnpm build
 
 ## 🚀 部署
 
-GitHub Pages 和 Cloudflare Pages 部署设置记录在 [deploy-pages.zh-cn.md](./.github/workflows/deploy-pages.zh-cn.md) 中。
+GitHub Pages 和 Cloudflare Pages 部署设置记录在 [【📖 deploy-pages.zh-cn.md】](./.github/workflows/deploy-pages.zh-cn.md) 中。
 
 ## 💬 反馈与问题
 

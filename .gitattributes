@@ -1,3 +1,6 @@
 # Include tracked Markdown files in GitHub Linguist language statistics.
 *.md linguist-detectable -linguist-documentation
 *.markdown linguist-detectable -linguist-documentation
+
+# Include the tracked English localization source in GitHub language statistics.
+/src/i18n/en.json linguist-language=JSON linguist-detectable

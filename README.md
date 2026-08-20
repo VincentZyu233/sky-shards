@@ -58,21 +58,30 @@ Processed by [Setting Context](./src/context/Settings.tsx)
 - `/:lang` - Translation
   - Available languages are in [Google Sheet](https://docs.google.com/spreadsheets/d/16eSANTI310SY8uWjsjbxNBzyD-49hwF3OGYRkFPykoo/edit#gid=2102926823)
 - Relative day
-  - `/:lang/tomorrow` or `/tmr` - Tomorrow's Shard Eruption page
-  - `/:lang/yesterday` or `/ytd` - Yesterday's Shard Eruption page
-- `/:lang/:year/:month/:day` - Shard Eruption page for a specific date, For example:
-  - `/:lang/2022/12/31` Shard Eruption page for 31st December 2022
-  - `/:lang/2023/1/1` Shard Eruption page for 1st January 2023
+  - `/:lang/tomorrow`, `/:lang/tmr`, `/tomorrow`, or `/tmr` - Tomorrow's Shard Eruption page
+  - `/:lang/yesterday`, `/:lang/ytd`, `/yesterday`, or `/ytd` - Yesterday's Shard Eruption page
+- `/:lang/:year/:month/:day` - Shard Eruption page for a specific date
+
+> Names beginning with `:` are placeholders and the colon is not part of the actual URL. Replace `:lang` with a language code such as `en` or `zh`, and replace the date placeholders with the desired date.
+>
+> Examples:
+>
+> - `/zh/2026/08/20?server=netease_cn`
+> - `/en/2026/08/20?server=tgc_global`
+> - `/zh/tomorrow?server=netease_cn`
 
 ### ⚙️ Query Parameters
 
-- `server` - Game server (`tgc_global` | `netease_cn`); missing or invalid values are normalized to `tgc_global`
-- `gsTrans` - Fetch Google Sheets translations (`1` | `0`)
-- `twelveHour` - Display time in 12-hour format (`true` | `false` | `system`)
-- `lightMode` - Light mode (`true` | `false` | `system`)
-- `timezone` - Timezone [IANA Timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) (`string`)
-- `fontSize` - Content font-size multiplier (`number`); missing or invalid values are normalized to `1`
-- `numCols` - Number of columns in the table in date selector (`number`)
+- `server` - Game server (`tgc_global` | `netease_cn`); defaults to `tgc_global`
+- `gsTrans` - Fetch Google Sheets translations (`1` | `0`); defaults to `0` and applies only to the current URL
+- `twelveHourMode` - Time format (`true` | `false` | `system`); defaults to `system`; legacy `twelveHour` URLs remain supported
+- `lightMode` - Color theme (`true` | `false` | `system`); defaults to `system`
+- `timezone` - Timezone (`system` | valid [IANA timezone identifier](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), such as `Asia/Shanghai`); defaults to `system`
+- `fontSize` - Content font-size multiplier (positive `number`); defaults to `1`
+- `numCols` - Number of columns in the date selector (`5` | `7`); defaults to `5`
+- `legTimeline` - Use the legacy timeline display (`1` | `0`); defaults to `1`
+
+> Example: `?server=netease_cn&twelveHourMode=true&fontSize=1.2&legTimeline=0`
 
 ## 🛠️ Development
 
@@ -109,7 +118,7 @@ pnpm build
 
 ## 🚀 Deployment
 
-GitHub Pages and Cloudflare Pages deployment setup is documented in [deploy-pages.md](./.github/workflows/deploy-pages.md).
+GitHub Pages and Cloudflare Pages deployment setup is documented in [【📖 deploy-pages.md】](./.github/workflows/deploy-pages.md).
 
 ## 💬 Feedback & Issues
 
