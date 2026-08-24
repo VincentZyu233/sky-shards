@@ -19,12 +19,28 @@
 
 ## 🖼️ 页面预览
 
-<p align="center">
-  <img src="./docs/images/preview/preview.pc.png" alt="Sky 碎片桌面端页面预览" width="100%" />
-</p>
+> ↓ 深色模式桌面端页面预览
 
 <p align="center">
-  <img src="./docs/images/preview/preview.phone.png" alt="Sky 碎片移动端页面预览" width="32%" />
+  <img src="./docs/images/preview/preview.pc.dark.png" alt="Sky 碎片深色模式桌面端页面预览" width="100%" />
+</p>
+
+> ↓ 深色模式移动端页面预览
+
+<p align="center">
+  <img src="./docs/images/preview/preview.phone.dark.png" alt="Sky 碎片深色模式移动端页面预览" width="32%" />
+</p>
+
+> ↓ 浅色模式桌面端页面预览
+
+<p align="center">
+  <img src="./docs/images/preview/preview.pc.white.png" alt="Sky 碎片浅色模式桌面端页面预览" width="100%" />
+</p>
+
+> ↓ 浅色模式移动端页面预览
+
+<p align="center">
+  <img src="./docs/images/preview/preview.phone.white.png" alt="Sky 碎片浅色模式移动端页面预览" width="32%" />
 </p>
 
 ## 🌍 服务器能力差异

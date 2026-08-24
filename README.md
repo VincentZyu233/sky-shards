@@ -19,12 +19,28 @@ Shard information follows the [Shard Prediction Rule](./ShardPredictionRule.md),
 
 ## 🖼️ Preview
 
-<p align="center">
-  <img src="./docs/images/preview/preview.pc.png" alt="Sky Shards desktop preview" width="100%" />
-</p>
+> ↓ Dark mode desktop preview
 
 <p align="center">
-  <img src="./docs/images/preview/preview.phone.png" alt="Sky Shards mobile preview" width="32%" />
+  <img src="./docs/images/preview/preview.pc.dark.png" alt="Sky Shards desktop preview in dark mode" width="100%" />
+</p>
+
+> ↓ Dark mode mobile preview
+
+<p align="center">
+  <img src="./docs/images/preview/preview.phone.dark.png" alt="Sky Shards mobile preview in dark mode" width="32%" />
+</p>
+
+> ↓ Light mode desktop preview
+
+<p align="center">
+  <img src="./docs/images/preview/preview.pc.white.png" alt="Sky Shards desktop preview in light mode" width="100%" />
+</p>
+
+> ↓ Light mode mobile preview
+
+<p align="center">
+  <img src="./docs/images/preview/preview.phone.white.png" alt="Sky Shards mobile preview in light mode" width="32%" />
 </p>
 
 ## 🌍 Server Capability Differences
