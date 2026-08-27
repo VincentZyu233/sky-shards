@@ -11,7 +11,7 @@
 
 This repository deploys the `production` branch to both platforms:
 
-- GitHub Pages: `https://vincentzyu233.github.io/sky-shards/`
+- GitHub Pages: `https://vincentzyuapps.github.io/sky-shards/`
 - Cloudflare Pages: `https://sky-shards-vincentzyu233-fork.pages.dev/`
 
 Every push to `production` runs the keyword check. The two deployment jobs run only when the latest commit message contains the lowercase keyword `deploy-pages` or `deploypages`. Brackets are optional, but uppercase variants do not trigger deployment. A manual workflow dispatch always deploys both sites.
@@ -22,7 +22,7 @@ Authenticate the GitHub CLI and confirm that it can access the fork:
 
 ```powershell
 gh auth status
-gh repo view VincentZyu233/sky-shards
+gh repo view VincentZyuApps/sky-shards
 ```
 
 ## 2. ☁️ Create the Cloudflare Pages project
@@ -110,9 +110,9 @@ If you did not record the Account ID from `wrangler whoami`, open [Workers & Pag
 Run these commands one at a time. `gh` prompts for each value without adding it to the command itself:
 
 ```powershell
-gh secret set CLOUDFLARE_API_TOKEN --repo VincentZyu233/sky-shards
-gh secret set CLOUDFLARE_ACCOUNT_ID --repo VincentZyu233/sky-shards
-gh secret list --repo VincentZyu233/sky-shards
+gh secret set CLOUDFLARE_API_TOKEN --repo VincentZyuApps/sky-shards
+gh secret set CLOUDFLARE_ACCOUNT_ID --repo VincentZyuApps/sky-shards
+gh secret list --repo VincentZyuApps/sky-shards
 ```
 
 The list command shows secret names and update times, not their values.
@@ -122,13 +122,13 @@ The list command shows secret names and update times, not their values.
 Create the Pages site with GitHub Actions as its build type:
 
 ```powershell
-gh api --method POST repos/VincentZyu233/sky-shards/pages -f build_type=workflow
+gh api --method POST repos/VincentZyuApps/sky-shards/pages -f build_type=workflow
 ```
 
 If GitHub reports that the Pages site already exists, update it instead:
 
 ```powershell
-gh api --method PUT repos/VincentZyu233/sky-shards/pages -f build_type=workflow
+gh api --method PUT repos/VincentZyuApps/sky-shards/pages -f build_type=workflow
 ```
 
 The UI equivalent is repository **Settings** -> **Pages** -> **Build and deployment** -> **Source: GitHub Actions**.
@@ -150,16 +150,16 @@ A `production` push without either keyword runs only the keyword check; both dep
 ## 7. 🔍 Run and inspect deployments manually
 
 ```powershell
-gh workflow run deploy-pages.yml --ref production --repo VincentZyu233/sky-shards
-gh run list --workflow deploy-pages.yml --repo VincentZyu233/sky-shards
-gh run watch --repo VincentZyu233/sky-shards
+gh workflow run deploy-pages.yml --ref production --repo VincentZyuApps/sky-shards
+gh run list --workflow deploy-pages.yml --repo VincentZyuApps/sky-shards
+gh run watch --repo VincentZyuApps/sky-shards
 ```
 
 To inspect a failed run, replace `RUN_ID` with the value shown by `gh run list`:
 
 ```powershell
-gh run view RUN_ID --log-failed --repo VincentZyu233/sky-shards
-gh run rerun RUN_ID --failed --repo VincentZyu233/sky-shards
+gh run view RUN_ID --log-failed --repo VincentZyuApps/sky-shards
+gh run rerun RUN_ID --failed --repo VincentZyuApps/sky-shards
 ```
 
 ## 🛠️ Troubleshooting

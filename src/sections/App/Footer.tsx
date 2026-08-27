@@ -46,12 +46,12 @@ function AppDetailFooter() {
             <span className='whitespace-nowrap'>
               Forked by:{' '}
               <a
-                href='https://github.com/VincentZyu233'
+                href='https://github.com/VincentZyuApps'
                 target='_blank'
                 rel='noreferrer'
                 className='decoration-current/40 font-semibold underline underline-offset-2 hover:decoration-current'
               >
-                VincentZyu233
+                VincentZyuApps
               </a>
             </span>
           </p>
@@ -59,7 +59,7 @@ function AppDetailFooter() {
         </div>
         <div className='mt-1 flex flex-row flex-wrap items-center justify-center gap-1'></div>
         <a
-          href='https://github.com/VincentZyu233/sky-shards'
+          href='https://github.com/VincentZyuApps/sky-shards'
           target='_blank'
           rel='noreferrer'
           className='block rounded-xl bg-black px-2 pb-1 pt-0.5 text-white'

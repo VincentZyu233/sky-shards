@@ -11,7 +11,7 @@
 
 本仓库会将 `production` 分支部署到以下两个平台：
 
-- GitHub Pages：`https://vincentzyu233.github.io/sky-shards/`
+- GitHub Pages：`https://vincentzyuapps.github.io/sky-shards/`
 - Cloudflare Pages：`https://sky-shards-vincentzyu233-fork.pages.dev/`
 
 每次推送到 `production` 都会运行关键词检查。只有最新提交信息包含小写关键词 `deploy-pages` 或 `deploypages` 时，两个部署任务才会运行。方括号可有可无，但大写形式不会触发部署。手动触发工作流始终会部署两个站点。
@@ -22,7 +22,7 @@
 
 ```powershell
 gh auth status
-gh repo view VincentZyu233/sky-shards
+gh repo view VincentZyuApps/sky-shards
 ```
 
 ## 2. ☁️ 创建 Cloudflare Pages 项目
@@ -110,9 +110,9 @@ Cloudflare 支持[通过 API 创建其他 Token](https://developers.cloudflare.c
 逐条运行以下命令。`gh` 会提示输入每个值，而不会将其加入命令本身：
 
 ```powershell
-gh secret set CLOUDFLARE_API_TOKEN --repo VincentZyu233/sky-shards
-gh secret set CLOUDFLARE_ACCOUNT_ID --repo VincentZyu233/sky-shards
-gh secret list --repo VincentZyu233/sky-shards
+gh secret set CLOUDFLARE_API_TOKEN --repo VincentZyuApps/sky-shards
+gh secret set CLOUDFLARE_ACCOUNT_ID --repo VincentZyuApps/sky-shards
+gh secret list --repo VincentZyuApps/sky-shards
 ```
 
 列表命令只显示 Secret 名称和更新时间，不显示它们的值。
@@ -122,13 +122,13 @@ gh secret list --repo VincentZyu233/sky-shards
 创建 Pages 站点，并将 GitHub Actions 设置为其构建类型：
 
 ```powershell
-gh api --method POST repos/VincentZyu233/sky-shards/pages -f build_type=workflow
+gh api --method POST repos/VincentZyuApps/sky-shards/pages -f build_type=workflow
 ```
 
 如果 GitHub 提示 Pages 站点已存在，请改为更新它：
 
 ```powershell
-gh api --method PUT repos/VincentZyu233/sky-shards/pages -f build_type=workflow
+gh api --method PUT repos/VincentZyuApps/sky-shards/pages -f build_type=workflow
 ```
 
 对应的界面操作是仓库 **Settings** -> **Pages** -> **Build and deployment** -> **Source: GitHub Actions**。
@@ -150,16 +150,16 @@ git push origin production
 ## 7. 🔍 手动运行和检查部署
 
 ```powershell
-gh workflow run deploy-pages.yml --ref production --repo VincentZyu233/sky-shards
-gh run list --workflow deploy-pages.yml --repo VincentZyu233/sky-shards
-gh run watch --repo VincentZyu233/sky-shards
+gh workflow run deploy-pages.yml --ref production --repo VincentZyuApps/sky-shards
+gh run list --workflow deploy-pages.yml --repo VincentZyuApps/sky-shards
+gh run watch --repo VincentZyuApps/sky-shards
 ```
 
 要检查失败的运行，请将 `RUN_ID` 替换为 `gh run list` 显示的值：
 
 ```powershell
-gh run view RUN_ID --log-failed --repo VincentZyu233/sky-shards
-gh run rerun RUN_ID --failed --repo VincentZyu233/sky-shards
+gh run view RUN_ID --log-failed --repo VincentZyuApps/sky-shards
+gh run rerun RUN_ID --failed --repo VincentZyuApps/sky-shards
 ```
 
 ## 🛠️ 故障排查
